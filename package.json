@@ -1,0 +1,25 @@
+{
+  "name": "names-in-time",
+  "version": "1.0.0",
+  "description": "See the history of names in the U.S. from 1880-2016",
+  "main": "server.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "knex": "^0.13.0",
+    "md5": "^2.2.1",
+    "pg": "^6.1.5"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.3.0"
+  }
+}
