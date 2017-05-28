@@ -11,9 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babyparse": "^0.4.6",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
+    "jsonfile": "^3.0.0",
     "knex": "^0.13.0",
+    "lodash": "^4.17.4",
     "md5": "^2.2.1",
     "pg": "^6.1.5"
   },
