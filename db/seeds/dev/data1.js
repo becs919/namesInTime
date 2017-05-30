@@ -1,7 +1,9 @@
 const _ = require('lodash')
+const fs = require('fs');
+const path = require('path');
+const Promise = require('bluebird');
 
 exports.seed = function (knex, Promise) {
-  // Deletes ALL existing entries
   return knex('junction').del()
     .then(function () {
       return knex('years').del()
@@ -11,19 +13,20 @@ exports.seed = function (knex, Promise) {
     })
     .then(function () {
       let morePromises = []
-      for (let year = 1880; year <= 1910; year++) {
-        let names = require(`../../../data/json/data${year}.json`)
+      for (let year = 1880; year <= 2016; year++) {
+        let namesPath = `../../../data/json/data${year}.json`;
+        let json = fs.readFileSync( path.resolve(__dirname, namesPath), 'utf8');
+        let names = JSON.parse(json);
         let p = knex('years').insert({ year }, 'id')
           .then(function (ids) {
             const yearId = ids[0]
-            let promises = names.data.map(item => {
+            return Promise.map(names.data, (item) => {
               return knex('names').insert(_.omit(item, 'year', 'count'), 'id')
               .then((ids) => {
                 const nameId = ids[0]
                 return knex('junction').insert({ name_id: nameId, year_id: yearId, count: item.count })
               })
-            })
-            return Promise.all(promises)
+            }, {concurrency: 3})
           })
         morePromises.push(p)
       }
