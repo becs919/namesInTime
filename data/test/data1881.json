@@ -1,0 +1,172 @@
+{
+  "data": [
+    {
+      "name": "Mary",
+      "gender": "F",
+      "count": 6919,
+      "year": 1881
+    },
+    {
+      "name": "Anna",
+      "gender": "F",
+      "count": 2698,
+      "year": 1881
+    },
+    {
+      "name": "Emma",
+      "gender": "F",
+      "count": 2034,
+      "year": 1881
+    },
+    {
+      "name": "Elizabeth",
+      "gender": "F",
+      "count": 1852,
+      "year": 1881
+    },
+    {
+      "name": "Margaret",
+      "gender": "F",
+      "count": 1658,
+      "year": 1881
+    },
+    {
+      "name": "Minnie",
+      "gender": "F",
+      "count": 1653,
+      "year": 1881
+    },
+    {
+      "name": "Ida",
+      "gender": "F",
+      "count": 1439,
+      "year": 1881
+    },
+    {
+      "name": "Annie",
+      "gender": "F",
+      "count": 1326,
+      "year": 1881
+    },
+    {
+      "name": "Bertha",
+      "gender": "F",
+      "count": 1324,
+      "year": 1881
+    },
+    {
+      "name": "Alice",
+      "gender": "F",
+      "count": 1308,
+      "year": 1881
+    },
+    {
+      "name": "Clara",
+      "gender": "F",
+      "count": 1242,
+      "year": 1881
+    },
+    {
+      "name": "Sarah",
+      "gender": "F",
+      "count": 1226,
+      "year": 1881
+    },
+    {
+      "name": "Ella",
+      "gender": "F",
+      "count": 1148,
+      "year": 1881
+    },
+    {
+      "name": "Nellie",
+      "gender": "F",
+      "count": 1096,
+      "year": 1881
+    },
+    {
+      "name": "Steve",
+      "gender": "M",
+      "count": 44,
+      "year": 1881
+    },
+    {
+      "name": "Ambrose",
+      "gender": "M",
+      "count": 43,
+      "year": 1881
+    },
+    {
+      "name": "Arch",
+      "gender": "M",
+      "count": 43,
+      "year": 1881
+    },
+    {
+      "name": "Dock",
+      "gender": "M",
+      "count": 43,
+      "year": 1881
+    },
+    {
+      "name": "Hubert",
+      "gender": "M",
+      "count": 43,
+      "year": 1881
+    },
+    {
+      "name": "Bill",
+      "gender": "M",
+      "count": 42,
+      "year": 1881
+    },
+    {
+      "name": "Burton",
+      "gender": "M",
+      "count": 42,
+      "year": 1881
+    },
+    {
+      "name": "Edmond",
+      "gender": "M",
+      "count": 42,
+      "year": 1881
+    },
+    {
+      "name": "Emory",
+      "gender": "M",
+      "count": 42,
+      "year": 1881
+    },
+    {
+      "name": "Luke",
+      "gender": "M",
+      "count": 42,
+      "year": 1881
+    },
+    {
+      "name": "Ole",
+      "gender": "M",
+      "count": 42,
+      "year": 1881
+    },
+    {
+      "name": "Elias",
+      "gender": "M",
+      "count": 41,
+      "year": 1881
+    },
+    {
+      "name": "Anderson",
+      "gender": "M",
+      "count": 40,
+      "year": 1881
+    },
+    {
+      "name": "Barney",
+      "gender": "M",
+      "count": 40,
+      "year": 1881
+    }
+  ]
+}
