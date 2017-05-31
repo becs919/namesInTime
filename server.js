@@ -2,6 +2,7 @@ const express = require('express');
 
 const app = express();
 const bodyParser = require('body-parser');
+const Promise = require('bluebird');
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
@@ -30,7 +31,7 @@ app.get('/api/v1/names', (request, response) => {
     .catch((error) => {
       response.status(404).send('no names', error);
     });
-  } else if (year) {
+  } else if (year && !name) {
     database('years').where('year', year).select('id')
       .then(row => {
         return database('junction').where('year_id', row[0].id).select('count')
@@ -42,7 +43,7 @@ app.get('/api/v1/names', (request, response) => {
         console.log(error);
         response.status(404).json(error);
       })
-  } else if (name) {
+  } else if (name && !year) {
     database('names').where('name', name).select('id')
       .then(names => {
         const namesArr = names.map(name => {
@@ -57,6 +58,40 @@ app.get('/api/v1/names', (request, response) => {
         console.log(error);
         response.status(404).json(error);
       })
+  } else if (name && year) {
+    // let subquery = database('years').where('year', year).select('id', 'year');
+    // console.log(subquery);
+    // let subquery2 = database('names').where('name', name).select('id', 'name', 'gender');
+    // console.log('subquery2',subquery2);
+    // database('junction').where('year_id', 'in', subquery).andWhere('name_id', 'in', subquery2).select('count', 'name_id', 'year_id')
+    //
+    //   .join('names', 'names.id', '=', subquery2).select('names.name', 'names.gender')
+    //   .join('years', 'junction.year_id', '=', subquery).select('year')
+    //   .then(rows => {
+    //     console.log(rows);
+    //   }).catch((err) => console.log(err))
+
+    let yearId
+    database('years').where('year', year).select('id')
+      .then((year) => {
+        yearId = year[0].id
+        return database('names').where('name', name).select('id')
+      })
+      .then((names) => {
+        return Promise.map(names, (name) => {
+          return database('junction').where('year_id', yearId).andWhere('name_id', name.id).select('count')
+          .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
+          .join('years', 'junction.year_id', '=', 'years.id').select('year');
+        })
+      })
+      .then(rows => {
+        let filtered = rows.filter(row => {
+          return row.length > 0;
+        })
+        response.status(200).json(filtered)
+      }).catch(error => {
+        response.status(500).json(error)
+      })
   }
 });
 
@@ -67,6 +102,36 @@ app.get('/api/v1/names/:id', (request, response) => {
       response.status(404).send('no names', error);
     });
 });
+
+
+app.post('/api/v1/names', (request, response) => {
+  let nameId
+  const {name, gender, count, year} = request.body;
+  database.transaction(trx => {
+    return trx('names').insert({name, gender}, 'id')
+    .then((ids) => {
+      nameId = ids[0]
+      return trx('years').where('year', year).select('id')
+    })
+    .then((years) => {
+      if(!years.length){
+        return trx('years').insert({year}, 'id')
+      } else {
+        return Promise.resolve([years.id])
+      }
+    })
+    .then((ids) => {
+      return trx('junction').insert({'year_id': ids[0], 'name_id': nameId, count})
+    })
+  })
+  .then(() => {
+    response.status(200).json('successful')
+  })
+  .catch(error => {
+    response.status(404).json(error)
+  })
+});
+
 
 // app.get('/api/v1/names', (request, response) => {
 //   database('names').where('id', request.params.id).select()
