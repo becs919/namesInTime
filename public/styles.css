@@ -1,0 +1,31 @@
+/*
+#50514F
+#F25F5C
+#FFE066
+#247BA0
+#70C1B3
+*/
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  background-color: #70C1B3;
+  color: #50514F;
+  font-weight: 500;
+  font-size: 30px;
+}
+
+.chart div {
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
