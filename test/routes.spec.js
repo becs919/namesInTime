@@ -56,16 +56,23 @@ describe('Everything', () => {
     describe('GET /api/v1/years/:id', () => {
       // need to get year id! change every seeding
       it.skip('should return specific year', (done) => {
+        let id
         chai.request(server)
-        // see below, fix those ???
-        .get('/api/v1/years/??????')
+        .get('/api/v1/years')
         .end((error, response) => {
-          response.should.have.status(200)
-          response.body.should.be.a('array')
-          response.body.length.should.equal(1)
           response.body[0].should.have.property('year')
-          response.body[0].should.have.property('id')
-          done()
+          id = response.body[0].id
+          return id
+          chai.request(server)
+          .get(`/api/v1/years/${id}`)
+          .end((error, response) => {
+            response.should.have.status(200)
+            response.body.should.be.a('array')
+            response.body.length.should.equal(1)
+            response.body[0].should.have.property('year')
+            response.body[0].should.have.property('id')
+            done()
+          })
         })
       })
 
