@@ -18,7 +18,7 @@ exports.up = function (knex, Promise) {
       table.foreign('year_id').references('years.id')
       table.integer('count').unsigned()
       table.timestamps(true, true)
-    })
+    }),
   ])
 }
 
@@ -26,6 +26,6 @@ exports.down = function (knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('junction'),
     knex.schema.dropTable('years'),
-    knex.schema.dropTable('names')
+    knex.schema.dropTable('names'),
   ])
 }
