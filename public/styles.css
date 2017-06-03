@@ -44,6 +44,17 @@ header {
   justify-content: center;
 }
 
-#year-search {
+#year-search, #gender {
   margin-left: 5px;
+}
+
+#year-search, #name-search {
+  border-radius: 3px;
+  border: none;
+  color: black;
+}
+
+#gender {
+  outline: none;
+  border: none;
 }
