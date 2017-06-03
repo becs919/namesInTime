@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const fs = require('fs')
 const path = require('path')
 const Promise = require('bluebird') // eslint-disable-line no-unused-vars
@@ -12,24 +11,46 @@ exports.seed = function (knex, Promise) {
       return knex('names').del()
     })
     .then(function () {
-      let morePromises = []
+      let yearsArray = []
+
       for (let year = 1880; year <= 2016; year++) {
-        let namesPath = `../../../data/json/data${year}.json`
-        let json = fs.readFileSync(path.resolve(__dirname, namesPath), 'utf8')
-        let names = JSON.parse(json)
-        let p = knex('years').insert({ year }, 'id')
-          .then(function (ids) {
-            const yearId = ids[0]
-            return Promise.map(names.data, (item) => {
-              return knex('names').insert(_.omit(item, 'year', 'count'), 'id')
-              .then((ids) => {
-                const nameId = ids[0]
-                return knex('junction').insert({ name_id: nameId, year_id: yearId, count: item.count })
-              })
-            }, {concurrency: 3})
-          })
-        morePromises.push(p)
+        yearsArray.push(year)
       }
-      return Promise.all(morePromises)
+
+      let dataPath = `../../../data/data.json`
+      let json = fs.readFileSync(path.resolve(__dirname, dataPath), 'utf8')
+      let names = JSON.parse(json)
+
+      return Promise.map(yearsArray, year => {
+        return knex('years').insert({ year: year, id: year })
+      })
+      .then(() => {
+        return Promise.map(Object.keys(names['F']), (name) => {
+          return knex.transaction(trx => {
+            return trx.insert({ name, gender: 'F' }, 'id').into('names')
+              .then(ids => {
+                return Promise.map(names['F'][name], entry => {
+                  let year = Object.keys(entry)[0]
+                  let count = entry[year]
+                  return trx.insert({ name_id: ids[0], year_id: year, count }).into('junction')
+                })
+              })
+          })
+        })
+      })
+      .then(() => {
+        return Promise.map(Object.keys(names['M']), (name) => {
+          return knex.transaction(trx => {
+            return trx.insert({ name, gender: 'M' }, 'id').into('names')
+              .then(ids => {
+                return Promise.map(names['M'][name], entry => {
+                  let year = Object.keys(entry)[0]
+                  let count = entry[year]
+                  return trx.insert({ name_id: ids[0], year_id: year, count }).into('junction')
+                })
+              })
+          })
+        })
+      })
     })
 }
