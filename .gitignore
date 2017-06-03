@@ -58,3 +58,5 @@ typings/
 .env
 
 data/json/*.json
+
+.DS_Store
