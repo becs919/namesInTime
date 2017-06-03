@@ -1,26 +1,29 @@
-const express = require('express');
+const express = require('express')
+const fs = require('fs')
+const app = express()
+const bodyParser = require('body-parser')
+const Promise = require('bluebird')
 
-const app = express();
-const bodyParser = require('body-parser');
-const Promise = require('bluebird');
+const environment = process.env.NODE_ENV || 'development'
+const configuration = require('./knexfile')[environment]
+const database = require('knex')(configuration)
 
-const environment = process.env.NODE_ENV || 'development';
-const configuration = require('./knexfile')[environment];
-const database = require('knex')(configuration);
+app.set('port', process.env.PORT || 3000)
+app.locals.title = 'NamesInTime'
 
-app.set('port', process.env.PORT || 3000);
-app.locals.title = 'NamesInTime';
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'))
 
-app.use(express.static('public'));
-
-app.get('/', (request, response ) => {
+app.get('/', (request, response) => {
   fs.readFile(`${__dirname}/index.html`, (err, file) => {
+    if (err) {
+      console.log(err)
+    }
     response.send(file)
   })
-});
+})
 
 app.get('/api/v1/names', (request, response) => {
   const year = request.query.year
@@ -29,8 +32,8 @@ app.get('/api/v1/names', (request, response) => {
     database('names').select().limit(10)
     .then(name => response.status(200).json(name))
     .catch((error) => {
-      response.status(404).send('no names', error);
-    });
+      response.status(404).send('no names', error)
+    })
   } else if (year && !name) {
     database('years').where('year', year).select('id')
       .then(row => {
@@ -40,8 +43,8 @@ app.get('/api/v1/names', (request, response) => {
       })
       .then(obj => response.status(200).json(obj))
       .catch(error => {
-        console.log(error);
-        response.status(404).json(error);
+        console.log(error)
+        response.status(404).json(error)
       })
   } else if (name && !year) {
     database('names').where('name', name).select('id')
@@ -55,8 +58,8 @@ app.get('/api/v1/names', (request, response) => {
       })
       .then(obj => response.status(200).json(obj))
       .catch(error => {
-        console.log(error);
-        response.status(404).json(error);
+        console.log(error)
+        response.status(404).json(error)
       })
   } else if (name && year) {
     // let subquery = database('years').where('year', year).select('id', 'year');
@@ -81,47 +84,47 @@ app.get('/api/v1/names', (request, response) => {
         return Promise.map(names, (name) => {
           return database('junction').where('year_id', yearId).andWhere('name_id', name.id).select('count')
           .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
-          .join('years', 'junction.year_id', '=', 'years.id').select('year');
+          .join('years', 'junction.year_id', '=', 'years.id').select('year')
         })
       })
       .then(rows => {
         let filtered = rows.filter(row => {
-          return row.length > 0;
+          return row.length > 0
         })
         response.status(200).json(filtered)
       }).catch(error => {
         response.status(500).json(error)
       })
   }
-});
+})
 
 app.get('/api/v1/names/:id', (request, response) => {
   database('names').where('id', request.params.id).select()
     .then(name => response.status(200).json(name))
     .catch((error) => {
-      response.status(404).send('no names', error);
-    });
-});
+      response.status(404).send('no names', error)
+    })
+})
 
 app.get('/api/v1/years/', (request, response) => {
   database('years').select().limit(10)
     .then(name => response.status(200).json(name))
     .catch((error) => {
-      response.status(404).send('no names', error);
-    });
-});
+      response.status(404).send('no names', error)
+    })
+})
 
 app.get('/api/v1/years/:id', (request, response) => {
   database('years').where('id', request.params.id).select()
     .then(year => response.status(200).json(year))
     .catch((error) => {
-      response.status(404).send('no years', error);
-    });
-});
+      response.status(404).send('no years', error)
+    })
+})
 
 app.post('/api/v1/names', (request, response) => {
   let nameId
-  const {name, gender, count, year} = request.body;
+  const {name, gender, count, year} = request.body
   database.transaction(trx => {
     return trx('names').insert({name, gender}, 'id')
     .then((ids) => {
@@ -129,7 +132,7 @@ app.post('/api/v1/names', (request, response) => {
       return trx('years').where('year', year).select('id')
     })
     .then((years) => {
-      if(!years.length){
+      if (!years.length) {
         return trx('years').insert({year}, 'id')
       } else {
         return Promise.resolve([years.id])
@@ -145,12 +148,12 @@ app.post('/api/v1/names', (request, response) => {
   .catch(error => {
     response.status(404).json(error)
   })
-});
+})
 
 if (!module.parent) {
   app.listen(app.get('port'), () => {
     console.log(`${app.locals.title} is running on ${app.get('port')}.`)
-  });
+  })
 }
 
-module.exports = app;
+module.exports = app

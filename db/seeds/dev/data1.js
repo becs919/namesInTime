@@ -1,7 +1,7 @@
 const _ = require('lodash')
-const fs = require('fs');
-const path = require('path');
-const Promise = require('bluebird');
+const fs = require('fs')
+const path = require('path')
+const Promise = require('bluebird') // eslint-disable-line no-unused-vars
 
 exports.seed = function (knex, Promise) {
   return knex('junction').del()
@@ -14,9 +14,9 @@ exports.seed = function (knex, Promise) {
     .then(function () {
       let morePromises = []
       for (let year = 1880; year <= 2016; year++) {
-        let namesPath = `../../../data/json/data${year}.json`;
-        let json = fs.readFileSync( path.resolve(__dirname, namesPath), 'utf8');
-        let names = JSON.parse(json);
+        let namesPath = `../../../data/json/data${year}.json`
+        let json = fs.readFileSync(path.resolve(__dirname, namesPath), 'utf8')
+        let names = JSON.parse(json)
         let p = knex('years').insert({ year }, 'id')
           .then(function (ids) {
             const yearId = ids[0]
