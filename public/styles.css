@@ -22,15 +22,6 @@ header {
   font-size: 30px;
 }
 
-.chart div {
-  font: 10px sans-serif;
-  background-color: #F25F5C;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: white;
-}
-
 #submit-button {
   border: none;
   background-color: #F25F5C;
