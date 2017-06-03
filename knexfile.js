@@ -12,7 +12,7 @@ module.exports = {
       directory: './db/seeds/dev'
     },
     useNullAsDefault: true,
-    pool: { min: 0, max: 10 },
+    pool: { min: 0, max: 10 }
   },
   production: {
     client: 'pg',

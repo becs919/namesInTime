@@ -1,10 +1,10 @@
+/* eslint-env mocha */
+
 process.env.NODE_ENV = 'test'
 const chaiHttp = require('chai-http')
 const server = require('../server')
 const chai = require('chai')
-
 const should = chai.should()
-
 const configuration = require('../knexfile')['test']
 const database = require('knex')(configuration)
 
@@ -39,6 +39,7 @@ describe('Everything', () => {
           response.body.length.should.equal(3)
           response.body[0].should.have.property('year')
           response.body[0].should.have.property('id')
+          should.be.null(error)
           done()
         })
       })
@@ -48,21 +49,21 @@ describe('Everything', () => {
         .get('/api/v1/yers')
         .end((error, response) => {
           response.should.have.status(404)
+          should.be.null(error)
           done()
         })
       })
     })
 
     describe('GET /api/v1/years/:id', () => {
-      // need to get year id! change every seeding
       it.skip('should return specific year', (done) => {
         let id
         chai.request(server)
         .get('/api/v1/years')
         .end((error, response) => {
           response.body[0].should.have.property('year')
+          should.be.null(error)
           id = response.body[0].id
-          return id
           chai.request(server)
           .get(`/api/v1/years/${id}`)
           .end((error, response) => {
@@ -71,6 +72,7 @@ describe('Everything', () => {
             response.body.length.should.equal(1)
             response.body[0].should.have.property('year')
             response.body[0].should.have.property('id')
+            should.be.null(error)
             done()
           })
         })
@@ -81,11 +83,10 @@ describe('Everything', () => {
         .get('/api/v1/yers/607')
         .end((error, response) => {
           response.should.have.status(404)
+          should.be.null(error)
           done()
         })
       })
     })
-
-
   })
 })
