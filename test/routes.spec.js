@@ -5,6 +5,7 @@ const chaiHttp = require('chai-http')
 const server = require('../server')
 const chai = require('chai')
 const should = chai.should()
+const expect = chai.expect
 const configuration = require('../knexfile')['test']
 const database = require('knex')(configuration)
 
@@ -39,7 +40,6 @@ describe('Everything', () => {
           response.body.length.should.equal(3)
           response.body[0].should.have.property('year')
           response.body[0].should.have.property('id')
-          should.be.null(error)
           done()
         })
       })
@@ -48,21 +48,19 @@ describe('Everything', () => {
         chai.request(server)
         .get('/api/v1/yers')
         .end((error, response) => {
-          response.should.have.status(404)
-          should.be.null(error)
+          error.response.should.have.status(404)
           done()
         })
       })
     })
 
     describe('GET /api/v1/years/:id', () => {
-      it.skip('should return specific year', (done) => {
+      it('should return specific year', (done) => {
         let id
         chai.request(server)
         .get('/api/v1/years')
         .end((error, response) => {
           response.body[0].should.have.property('year')
-          should.be.null(error)
           id = response.body[0].id
           chai.request(server)
           .get(`/api/v1/years/${id}`)
@@ -72,7 +70,6 @@ describe('Everything', () => {
             response.body.length.should.equal(1)
             response.body[0].should.have.property('year')
             response.body[0].should.have.property('id')
-            should.be.null(error)
             done()
           })
         })
@@ -80,10 +77,91 @@ describe('Everything', () => {
 
       it('should return 404 for a non existent route', (done) => {
         chai.request(server)
-        .get('/api/v1/yers/607')
+        .get('/api/v1/years/49596930024556')
         .end((error, response) => {
           response.should.have.status(404)
-          should.be.null(error)
+          done()
+        })
+      })
+    })
+
+    describe('GET /api/v1/names', () => {
+      it('should return all of the names', (done) => {
+        chai.request(server)
+        .get('/api/v1/names')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('array')
+          response.body.length.should.equal(10)
+          response.body[0].should.have.property('name')
+          response.body[0].should.have.property('id')
+          response.body[0].should.have.property('gender')
+          done()
+        })
+      })
+
+      it('should return 404 for a non existent route', (done) => {
+        chai.request(server)
+        .get('/api/v1/name')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          done()
+        })
+      })
+    })
+
+    describe('GET /api/v1/names/:id', () => {
+      it('should return specific name', (done) => {
+        let id
+        chai.request(server)
+        .get('/api/v1/names')
+        .end((error, response) => {
+          id = response.body[0].id
+          chai.request(server)
+          .get(`/api/v1/names/${id}`)
+          .end((error, response) => {
+            response.should.have.status(200)
+            response.body.should.be.a('array')
+            response.body.length.should.equal(1)
+            response.body[0].should.have.property('name')
+            response.body[0].should.have.property('gender')
+            done()
+          })
+        })
+      })
+
+      it('should return 404 for a non existent route', (done) => {
+        chai.request(server)
+        .get('/api/v1/names/19867684939')
+        .end((error, response) => {
+          response.should.have.status(404)
+          done()
+        })
+      })
+    })
+
+    describe('GET /api/v1/names/ QUERY PARAMS', () => {
+      it('should return specific name', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?name=Mary')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('array')
+          response.body.length.should.equal(2)
+          response.body[0][0].should.have.property('name')
+          response.body[0][0].name.should.equal('Mary')
+          response.body[0][0].should.have.property('gender')
+          response.body[0][0].should.have.property('count')
+          done()
+        })
+      })
+
+      it.skip('should return 404 for a non existent route', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?name=Maryy')
+        .end((error, response) => {
+          console.log(error, response)
+          error.response.should.have.status(404)
           done()
         })
       })
