@@ -1,7 +1,6 @@
 // Update with your config settings.
 
 module.exports = {
-
   development: {
     client: 'pg',
     connection: 'postgres://localhost/names',
@@ -12,7 +11,11 @@ module.exports = {
       directory: './db/seeds/dev',
     },
     useNullAsDefault: true,
-    pool: { min: 0, max: 10 },
+    acquireConnectionTimeout: 600000,
+    pool: {
+      min: 2,
+      max: 20,
+    },
   },
   production: {
     client: 'pg',
@@ -21,6 +24,11 @@ module.exports = {
       directory: './db/migrations',
     },
     useNullAsDefault: true,
+    acquireConnectionTimeout: 600000,
+    pool: {
+      min: 2,
+      max: 20,
+    },
   },
   test: {
     client: 'pg',
@@ -32,6 +40,11 @@ module.exports = {
       directory: './db/seeds/test',
     },
     useNullAsDefault: true,
+    acquireConnectionTimeout: 600000,
+    pool: {
+      min: 2,
+      max: 20,
+    },
   },
   staging: {
     client: 'pg',
