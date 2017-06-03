@@ -28,13 +28,14 @@ app.get('/', (request, response) => {
 app.get('/api/v1/names', (request, response) => {
   const year = request.query.year
   const name = request.query.name
-  if (!year && !name) {
+  const gender = request.query.gender
+  if (!year && !name && !gender) {
     database('names').select().limit(10)
     .then(name => response.status(200).json(name))
     .catch((error) => {
       response.status(404).send('no names', error)
     })
-  } else if (year && !name) {
+  } else if (year && !name && !gender) {
     database('years').where('year', year).select('id')
       .then(row => {
         return database('junction').where('year_id', row[0].id).select('count')
@@ -46,7 +47,7 @@ app.get('/api/v1/names', (request, response) => {
         console.log(error)
         response.status(404).json(error)
       })
-  } else if (name && !year) {
+  } else if (name && !year && !gender) {
     database('names').where('name', name).select('id')
       .then(names => {
         const namesArr = names.map(name => {
@@ -61,7 +62,7 @@ app.get('/api/v1/names', (request, response) => {
         console.log(error)
         response.status(404).json(error)
       })
-  } else if (name && year) {
+  } else if (name && year && !gender) {
     // let subquery = database('years').where('year', year).select('id', 'year');
     // console.log(subquery);
     // let subquery2 = database('names').where('name', name).select('id', 'name', 'gender');
@@ -95,14 +96,56 @@ app.get('/api/v1/names', (request, response) => {
       }).catch(error => {
         response.status(500).json(error)
       })
+  } else if (name && year && gender) {
+    let yearId
+    database('years').where('year', year).select('id')
+    .then((year) => {
+      yearId = year[0].id
+      return database('names').where('name', name).andWhere('gender', gender).select('id')
+    })
+    .then((names) => {
+      return Promise.map(names, (name) => {
+        return database('junction').where('year_id', yearId).andWhere('name_id', name.id).select('count')
+        .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
+        .join('years', 'junction.year_id', '=', 'years.id').select('year')
+      })
+    })
+    .then(rows => {
+      let filtered = rows.filter(row => {
+        return row.length > 0
+      })
+      response.status(200).json(filtered)
+    }).catch(error => {
+      response.status(500).json(error)
+    })
+  } else if (name && !year && gender) {
+    database('names').where('name', name).andWhere('gender', gender).select('id')
+      .then(genders => {
+        const gendersArr = genders.map(gender => {
+          return database('junction').where('name_id', gender.id).select('count').limit(10)
+          .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
+          .join('years', 'junction.year_id', '=', 'years.id').select('year')
+        })
+        return Promise.all(gendersArr)
+      })
+      .then(obj => response.status(200).json(obj))
+      .catch(error => {
+        console.log(error)
+        response.status(404).json(error)
+      })
+  } else if (!name && year && gender) {
+    // NEED TO DO
+  } else if (!name && !year && gender) {
+  // NEED TO DO
   }
+  // ONE MORE BUT DONT KNOW WHAT IT IS??
 })
 
 app.get('/api/v1/names/:id', (request, response) => {
   database('names').where('id', request.params.id).select()
     .then(name => response.status(200).json(name))
     .catch((error) => {
-      response.status(404).send('no names', error)
+      response.sendStatus(404)
     })
 })
 
@@ -118,7 +161,7 @@ app.get('/api/v1/years/:id', (request, response) => {
   database('years').where('id', request.params.id).select()
     .then(year => response.status(200).json(year))
     .catch((error) => {
-      response.status(404).send('no years', error)
+      response.sendStatus(404)
     })
 })
 
