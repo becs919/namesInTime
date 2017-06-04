@@ -23,7 +23,6 @@ header {
 }
 
 #submit-button {
-  border: none;
   background-color: #F25F5C;
   margin-left: 10px;
   color: white;
@@ -40,12 +39,29 @@ header {
 }
 
 #year-search, #name-search {
-  border-radius: 3px;
+  border-radius: 5px;
   border: none;
-  color: black;
+  padding: 3px;
+  outline: none;
 }
 
-#gender {
+#gender, #submit-button {
   outline: none;
   border: none;
+}
+
+#error-msg {
+  color: #F25F5C;
+  text-align: center;
+  margin-top: 10px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#year-search {
+  width: 110px;
 }
