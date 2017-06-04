@@ -134,11 +134,43 @@ app.get('/api/v1/names', (request, response) => {
         response.status(404).json(error)
       })
   } else if (!name && year && gender) {
-    // NEED TO DO
+    let yearId
+    database('years').where('year', year).select('id')
+      .then((year) => {
+        yearId = year[0].id
+        return database('names').where('gender', gender).select('id').limit(25)
+      })
+      .then((genders) => {
+        return Promise.map(genders, (gender) => {
+          return database('junction').where('year_id', yearId).andWhere('name_id', gender.id).select('count')
+          .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
+          .join('years', 'junction.year_id', '=', 'years.id').select('year')
+        })
+      })
+      .then(rows => {
+        let filtered = rows.filter(row => {
+          return row.length > 0
+        })
+        response.status(200).json(filtered)
+      }).catch(error => {
+        response.status(500).json(error)
+      })
   } else if (!name && !year && gender) {
-  // NEED TO DO
+    database('names').where('gender', gender).select('id').limit(25)
+      .then(genders => {
+        const gendersArr = genders.map(gender => {
+          return database('junction').where('name_id', gender.id).select('count')
+          .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
+          .join('years', 'junction.year_id', '=', 'years.id').select('year')
+        })
+        return Promise.all(gendersArr)
+      })
+      .then(obj => response.status(200).json(obj))
+      .catch(error => {
+        // GETTING 200 NEED TO FIGURE OUT
+        response.sendStatus(404)
+      })
   }
-  // ONE MORE BUT DONT KNOW WHAT IT IS??
 })
 
 app.get('/api/v1/names/:id', (request, response) => {
