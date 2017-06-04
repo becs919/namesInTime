@@ -28,23 +28,23 @@
         .data(datapoints)
         .enter().append('circle')
         .attr('class', 'people')
-        .attr('r', function(d) {
+        .attr('r', function (d) {
           return radiusScale(d.count)
         })
         .attr('fill', 'lightblue')
-          .on('click', function(d) {
-            console.log(d);
-          })
+        .on('click', function (d) {
+          console.log(d);
+        })
 
     simulation.nodes(datapoints)
       .on('tick', ticked)
 
     function ticked() {
       circles
-        .attr('cx', function(d) {
+        .attr('cx', function (d) {
           return d.x
         })
-        .attr('cy', function(d) {
+        .attr('cy', function (d) {
           return d.y
         })
     }
