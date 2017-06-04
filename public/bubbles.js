@@ -32,8 +32,11 @@
           return radiusScale(d.count)
         })
         .attr('fill', 'lightblue')
-          .on('click', function(d) {
-            console.log(d);
+          .on('click', function (d) {
+            node.append("svg:text")
+                .text(function (d) { return d.name })
+                .attr("x", function (d) { return d.x })
+                .attr("y", function (d) { return d.y })
           })
 
     simulation.nodes(datapoints)
@@ -41,10 +44,10 @@
 
     function ticked() {
       circles
-        .attr('cx', function(d) {
+        .attr('cx', function (d) {
           return d.x
         })
-        .attr('cy', function(d) {
+        .attr('cy', function (d) {
           return d.y
         })
     }
