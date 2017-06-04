@@ -44,7 +44,6 @@ app.get('/api/v1/names', (request, response) => {
       })
       .then(obj => response.status(200).json(obj))
       .catch(error => {
-        console.log(error)
         response.status(404).json(error)
       })
   } else if (name && !year && !gender) {
@@ -59,7 +58,6 @@ app.get('/api/v1/names', (request, response) => {
       })
       .then(obj => response.status(200).json(obj))
       .catch(error => {
-        console.log(error)
         response.status(404).json(error)
       })
   } else if (name && year && !gender) {
@@ -94,7 +92,7 @@ app.get('/api/v1/names', (request, response) => {
         })
         response.status(200).json(filtered)
       }).catch(error => {
-        response.status(500).json(error)
+        response.status(404).json(error)
       })
   } else if (name && year && gender) {
     let yearId
@@ -116,7 +114,7 @@ app.get('/api/v1/names', (request, response) => {
       })
       response.status(200).json(filtered)
     }).catch(error => {
-      response.status(500).json(error)
+      response.status(404).json(error)
     })
   } else if (name && !year && gender) {
     database('names').where('name', name).andWhere('gender', gender).select('id')
@@ -153,7 +151,7 @@ app.get('/api/v1/names', (request, response) => {
         })
         response.status(200).json(filtered)
       }).catch(error => {
-        response.status(500).json(error)
+        response.status(404).json(error)
       })
   } else if (!name && !year && gender) {
     database('names').where('gender', gender).select('id').limit(25)
