@@ -92,11 +92,7 @@ app.get('/api/v1/names', (request, response) => {
         let filtered = rows.filter(row => {
           return row.length > 0
         })
-        if (filtered.length <= 0) {
-          response.sendStatus(404)
-        } else {
-          response.status(200).json(filtered)
-        }
+        response.status(200).json(filtered)
       }).catch(error => {
         response.status(500).json(error)
       })
@@ -118,11 +114,7 @@ app.get('/api/v1/names', (request, response) => {
       let filtered = rows.filter(row => {
         return row.length > 0
       })
-      if (filtered.length <= 0) {
-        response.sendStatus(404)
-      } else {
-        response.status(200).json(filtered)
-      }
+      response.status(200).json(filtered)
     }).catch(error => {
       response.status(404).json(error)
     })
@@ -161,11 +153,7 @@ app.get('/api/v1/names', (request, response) => {
         let filtered = rows.filter(row => {
           return row.length > 0
         })
-        if (filtered.length <= 0) {
-          response.sendStatus(404)
-        } else {
-          response.status(200).json(filtered)
-        }
+        response.status(200).json(filtered)
       }).catch(error => {
         response.status(404).json(error)
       })
