@@ -28,16 +28,13 @@
         .data(datapoints)
         .enter().append('circle')
         .attr('class', 'people')
-        .attr('r', function(d) {
+        .attr('r', function (d) {
           return radiusScale(d.count)
         })
         .attr('fill', 'lightblue')
-          .on('click', function (d) {
-            node.append("svg:text")
-                .text(function (d) { return d.name })
-                .attr("x", function (d) { return d.x })
-                .attr("y", function (d) { return d.y })
-          })
+        .on('click', function (d) {
+          console.log(d);
+        })
 
     simulation.nodes(datapoints)
       .on('tick', ticked)
