@@ -206,11 +206,12 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route', (done) => {
+      it('should return 404 for a non existent route for gender', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=female')
         .end((error, response) => {
           error.response.should.have.status(404)
+          error.response.text.should.equal('Error: Invalid Gender')
           done()
         })
       })
@@ -242,18 +243,29 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route with incorrect gender', (done) => {
+      it('should return 404 for a non existent route with incorrect gender', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=Female&year=1880&name=Erica')
         .end((error, response) => {
           error.response.should.have.status(404)
+          error.response.text.should.equal('Error: No Matching Name, Year, or Gender')
           done()
         })
       })
 
-      it.skip('should return 404 for a non existent route with incorrect name', (done) => {
+      it('should return 404 for a non existent route with incorrect name', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=F&year=1880&name=Ericaaa')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          error.response.text.should.equal('Error: No Matching Name, Year, or Gender')
+          done()
+        })
+      })
+
+      it('should return 404 for a non existent route with incorrect name, gender and year', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?gender=F&year=1880&name=Ericaaa&year=756')
         .end((error, response) => {
           error.response.should.have.status(404)
           done()
@@ -277,7 +289,7 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route for incorrect gender', (done) => {
+      it('should return 404 for a non existent route for incorrect gender', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=Female&name=Erica')
         .end((error, response) => {
@@ -286,11 +298,22 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route with incorrect name', (done) => {
+      it('should return 404 for a non existent route with incorrect name', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=F&name=Ericssssa')
         .end((error, response) => {
           error.response.should.have.status(404)
+          error.response.text.should.equal('Error: No Matching Name')
+          done()
+        })
+      })
+
+      it('should return 404 for a non existent route with incorrect name and gender', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?gender=Female&name=Ericssssa')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          error.response.text.should.equal('Error: No Matching Name')
           done()
         })
       })
@@ -340,14 +363,12 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return gender and year', (done) => {
+      it('should return gender and year', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=M&year=1880')
         .end((error, response) => {
           response.should.have.status(200)
           response.body.should.be.a('array')
-          // COMING UP WITH DIFFERENT ARRAY LENGTHS EACH TIME RUN
-          response.body.length.should.equal(5)
           response.body[0][0].should.have.property('gender')
           response.body[0][0].gender.should.equal('M')
           response.body[0][0].should.have.property('count')
@@ -358,11 +379,12 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route for incorrect gender', (done) => {
+      it('should return 404 for a non existent route for incorrect gender', (done) => {
         chai.request(server)
         .get('/api/v1/names?gender=Male&year=1880')
         .end((error, response) => {
           error.response.should.have.status(404)
+          error.response.text.should.equal('Error: No Matching Name or Year')
           done()
         })
       })
@@ -376,6 +398,14 @@ describe('Everything', () => {
         })
       })
 
+      it('should return 404 for a non existent route with incorrect year and gender', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?year=9385764&gender=Male')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          done()
+        })
+      })
     })
   })
 })

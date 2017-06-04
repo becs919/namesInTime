@@ -67,18 +67,6 @@ app.get('/api/v1/names', (request, response) => {
         response.status(404).json(error)
       })
   } else if (name && year && !gender) {
-    // let subquery = database('years').where('year', year).select('id', 'year');
-    // console.log(subquery);
-    // let subquery2 = database('names').where('name', name).select('id', 'name', 'gender');
-    // console.log('subquery2',subquery2);
-    // database('junction').where('year_id', 'in', subquery).andWhere('name_id', 'in', subquery2).select('count', 'name_id', 'year_id')
-    //
-    //   .join('names', 'names.id', '=', subquery2).select('names.name', 'names.gender')
-    //   .join('years', 'junction.year_id', '=', subquery).select('year')
-    //   .then(rows => {
-    //     console.log(rows);
-    //   }).catch((err) => console.log(err))
-
     let yearId
     database('years').where('year', year).select('id')
       .then((year) => {
@@ -122,7 +110,10 @@ app.get('/api/v1/names', (request, response) => {
       let filtered = rows.filter(row => {
         return row.length > 0
       })
-      response.status(200).json(filtered)
+      if (!filtered.length) {
+        return response.status(404).send('Error: No Matching Name, Year, or Gender')
+      }
+      return response.status(200).json(filtered)
     }).catch(error => {
       response.status(404).json(error)
     })
@@ -136,7 +127,13 @@ app.get('/api/v1/names', (request, response) => {
         })
         return Promise.all(gendersArr)
       })
-      .then(obj => response.status(200).json(obj))
+      .then(obj => {
+        if (!obj[0]) {
+          response.status(404).send('Error: No Matching Name')
+        } else {
+          response.status(200).json(obj)
+        }
+      })
       .catch(error => {
         console.log(error)
         response.status(404).json(error)
@@ -159,7 +156,10 @@ app.get('/api/v1/names', (request, response) => {
         let filtered = rows.filter(row => {
           return row.length > 0
         })
-        response.status(200).json(filtered)
+        if (!filtered.length) {
+          return response.status(404).send('Error: No Matching Name or Year')
+        }
+        return response.status(200).json(filtered)
       }).catch(error => {
         response.status(404).json(error)
       })
@@ -173,10 +173,14 @@ app.get('/api/v1/names', (request, response) => {
         })
         return Promise.all(gendersArr)
       })
-      .then(obj => response.status(200).json(obj))
+      .then(obj => {
+        if (!obj[0]) {
+          return response.status(404).send('Error: Invalid Gender')
+        }
+        return response.status(200).json(obj)
+      })
       .catch(error => {
-        // GETTING 200 NEED TO FIGURE OUT
-        response.sendStatus(404)
+        response.status(404).json(error)
       })
   }
 })
