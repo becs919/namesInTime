@@ -23,6 +23,9 @@ module.exports = {
     migrations: {
       directory: './db/migrations',
     },
+    seeds: {
+      directory: './db/seeds/dev',
+    },
     useNullAsDefault: true,
     acquireConnectionTimeout: 600000,
     pool: {
@@ -45,13 +48,5 @@ module.exports = {
       min: 2,
       max: 20,
     },
-  },
-  staging: {
-    client: 'pg',
-    connection: process.env.DATABASE_URL + `?ssl=true`,
-    migrations: {
-      directory: './db/migrations',
-    },
-    useNullAsDefault: true,
   },
 }
