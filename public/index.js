@@ -5,91 +5,133 @@ $('#submit-button').on('click', event => {
   const year = $('#year-search').val()
   const gender = $('#gender').val()
 
-  getNames(name, year, gender)
+  if (year) {
+    if (year <= 2016 && year >= 1880) {
+      submitData(name, year, gender)
+    } else {
+      $error.text('Error: Enter a year between 1880-2016')
+    }
+  } else if (!year) {
+    submitData(name, year, gender)
+  }
 })
 
-const getNames = (name, year, gender) => {
+const fetchAllParams = (name, year, gender) => {
+  fetch(`/api/v1/names?name=${name}&year=${year}&gender=${gender}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    if (!json.length) {
+      $error.text('Error: No Matches')
+    }
+    console.log(json)
+  }).catch(error => $error.text(error))
+}
+
+const fetchName = (name) => {
+  fetch(`/api/v1/names?name=${name}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    if (!json.length) {
+      $error.text('Error: Invalid Name')
+    }
+    console.log(json)
+  }).catch(error => {
+    $error.text('Error: No Matching Name')
+    console.error(error)
+  })
+}
+
+const fetchYear = (year) => {
+  fetch(`/api/v1/names?year=${year}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    console.log(json)
+  }).catch(error => $error.text(error))
+}
+
+const fetchGender = (gender) => {
+  fetch(`/api/v1/names?gender=${gender}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    console.log(json)
+  }).catch(error => $error.text(error))
+}
+
+const fetchYearName = (year, name) => {
+  fetch(`/api/v1/names?name=${name}&year=${year}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    if (!json.length) {
+      $error.text('Error: Invalid Name')
+    }
+    console.log(json)
+  }).catch(error => $error.text(error))
+}
+
+const fetchNameGender = (name, gender) => {
+  fetch(`/api/v1/names?name=${name}&gender=${gender}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    console.log(json)
+  }).catch(error => $error.text(error))
+}
+
+const fetchYearGender = (year, gender) => {
+  fetch(`/api/v1/names?gender=${gender}&year=${year}`, {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).then(json => {
+    if (!json.length) {
+      $error.text('Error: No Matches')
+    }
+    console.log(json)
+  }).catch(error => $error.text(error))
+}
+
+const submitData = (name, year, gender) => {
   // IF ALL GENDERS
   if (gender === 'All' || gender === 'hide') {
     if (name && !year) {
       $error.empty()
-      fetch(`/api/v1/names?name=${name}`, {
-        method: 'GET',
-      }).then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json)
-      }).catch(error => {
-        $error.text('Error: No Matching Name')
-        console.error(error)
-      })
+      fetchName(name)
     } else if (year && !name) {
       $error.empty()
-      fetch(`/api/v1/names?year=${year}`, {
-        method: 'GET',
-      }).then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json)
-      }).catch(error => $error.text(error))
+      fetchYear(year)
     } else if (name && year) {
       $error.empty()
-      fetch(`/api/v1/names?name=${name}&year=${year}`, {
-        method: 'GET',
-      }).then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json)
-      }).catch(error => $error.text(error))
+      fetchYearName(year, name)
     } else if (!name && !year && gender === 'All') {
       $error.text('Error: Please Enter a Name or Year')
-    } else if (!name && !year && gender === 'hide') {
-      $error.text('Error: Please Enter A Name, Year, or Gender')
     } else {
       $error.text('Error: Please Enter A Name, Year, or Gender')
     }
-    // IF EITHER M OR F
+    // IF EITHER MALE OR FEMALE
   } else if (gender === 'M' || gender === 'F') {
     if (name && year && gender) {
       $error.empty()
-      fetch(`/api/v1/names?name=${name}&year=${year}&gender=${gender}`, {
-        method: 'GET',
-      }).then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json)
-      }).catch(error => $error.text(error))
+      fetchAllParams(name, year, gender)
     } else if (name && !year && gender) {
       $error.empty()
-      fetch(`/api/v1/names?name=${name}&gender=${gender}`, {
-        method: 'GET',
-      }).then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json)
-      }).catch(error => $error.text(error))
+      fetchNameGender(name, gender)
     } else if (!name && year && gender) {
       $error.empty()
-      fetch(`/api/v1/names?gender=${gender}&year=${year}`, {
-        method: 'GET',
-      }).then(response => {
-        if (response.okay) {
-          return response.json()
-        } else {
-          $error.text('Error: No Matches')
-        }
-      }).then(json => {
-        console.log(json)
-      }).catch(error => $error.text(error))
+      fetchYearGender(year, gender)
     } else if (!name && !year && gender) {
       $error.empty()
-      fetch(`/api/v1/names?gender=${gender}`, {
-        method: 'GET',
-      }).then(response => {
-        return response.json()
-      }).then(json => {
-        console.log(json)
-      }).catch(error => $error.text(error))
+      fetchGender(gender)
     } else {
       $error.text('Error: Please Enter A Name, Year, or Gender')
     }
