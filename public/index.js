@@ -19,7 +19,10 @@ const getNames = (name, year, gender) => {
         return response.json()
       }).then(json => {
         console.log(json)
-      }).catch(error => $error.text(error))
+      }).catch(error => {
+        $error.text('Error: No Matching Name')
+        console.error(error)
+      })
     } else if (year && !name) {
       $error.empty()
       fetch(`/api/v1/names?year=${year}`, {

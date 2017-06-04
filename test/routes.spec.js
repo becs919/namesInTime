@@ -156,7 +156,7 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route', (done) => {
+      it('should return 404 for a non existent route', (done) => {
         chai.request(server)
         .get('/api/v1/names?name=Maryy')
         .end((error, response) => {
@@ -313,9 +313,18 @@ describe('Everything', () => {
         })
       })
 
-      it.skip('should return 404 for a non existent route for incorrect name', (done) => {
+      it('should return 404 for a non existent route for incorrect name', (done) => {
         chai.request(server)
         .get('/api/v1/names?name=Ericaaaa&year=1880')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          done()
+        })
+      })
+
+      it('should return 404 for a non existent route for incorrect name and year', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?name=Ericaaaa&year=18')
         .end((error, response) => {
           error.response.should.have.status(404)
           done()
@@ -325,6 +334,42 @@ describe('Everything', () => {
       it('should return 404 for a non existent route with incorrect year', (done) => {
         chai.request(server)
         .get('/api/v1/names?year=9385764&name=Emma')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          done()
+        })
+      })
+
+      it.skip('should return gender and year', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?gender=M&year=1880')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.should.be.a('array')
+          // COMING UP WITH DIFFERENT ARRAY LENGTHS EACH TIME RUN
+          response.body.length.should.equal(5)
+          response.body[0][0].should.have.property('gender')
+          response.body[0][0].gender.should.equal('M')
+          response.body[0][0].should.have.property('count')
+          response.body[0][0].should.have.property('name')
+          response.body[0][0].should.have.property('year')
+          response.body[0][0].year.should.equal(1880)
+          done()
+        })
+      })
+
+      it.skip('should return 404 for a non existent route for incorrect gender', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?gender=Male&year=1880')
+        .end((error, response) => {
+          error.response.should.have.status(404)
+          done()
+        })
+      })
+
+      it('should return 404 for a non existent route with incorrect year', (done) => {
+        chai.request(server)
+        .get('/api/v1/names?year=9385764&gender=M')
         .end((error, response) => {
           error.response.should.have.status(404)
           done()

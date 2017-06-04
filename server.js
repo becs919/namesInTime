@@ -56,7 +56,13 @@ app.get('/api/v1/names', (request, response) => {
         })
         return Promise.all(namesArr)
       })
-      .then(obj => response.status(200).json(obj))
+      .then(obj => {
+        if (!obj[0]) {
+          response.status(404).send('Error: No Matching Name')
+        } else {
+          response.status(200).json(obj)
+        }
+      })
       .catch(error => {
         response.status(404).json(error)
       })
@@ -90,7 +96,11 @@ app.get('/api/v1/names', (request, response) => {
         let filtered = rows.filter(row => {
           return row.length > 0
         })
-        response.status(200).json(filtered)
+        if (!filtered.length) {
+          response.status(404).send('Error: No Matching Name')
+        } else {
+          response.status(200).json(filtered)
+        }
       }).catch(error => {
         response.status(404).json(error)
       })
