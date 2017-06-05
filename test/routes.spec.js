@@ -422,10 +422,21 @@ describe('Everything', () => {
         })
         .set('Authorization', process.env.TOKEN)
         .end((error, response) => {
-          console.log(response.body)
           response.should.have.status(201)
-          response.body.should.equal('successful')
-          done()
+          chai.request(server)
+          .get('/api/v1/names?name=RobbieCool')
+          .end((err, res) => {
+            res.status.should.equal(200)
+            res.body[0][0].should.have.property('count')
+            res.body[0][0].should.have.property('name')
+            res.body[0][0].should.have.property('year')
+            res.body[0][0].should.have.property('gender')
+            res.body[0][0].count.should.equal(1)
+            res.body[0][0].name.should.equal('RobbieCool')
+            res.body[0][0].gender.should.equal('M')
+            res.body[0][0].year.should.equal(1880)
+            done()
+          })
         })
     })
 
@@ -445,7 +456,7 @@ describe('Everything', () => {
         })
     })
 
-    it('should post a new name if missing count', (done) => {
+    it('should not post a new name if missing count', (done) => {
       chai.request(server)
       .post('/api/v1/names')
       .send(
@@ -456,12 +467,12 @@ describe('Everything', () => {
         })
         .set('Authorization', process.env.TOKEN)
         .end((error, response) => {
-          response.should.have.status(201)
+          response.should.have.status(404)
           done()
         })
     })
 
-    it('should post a new name if missing gender', (done) => {
+    it('should not post a new name if missing gender', (done) => {
       chai.request(server)
       .post('/api/v1/names')
       .send(
@@ -472,12 +483,12 @@ describe('Everything', () => {
         })
         .set('Authorization', process.env.TOKEN)
         .end((error, response) => {
-          response.should.have.status(201)
+          response.should.have.status(404)
           done()
         })
     })
 
-    it('should post a new name if missing nameId', (done) => {
+    it('should not post a new name if missing name', (done) => {
       chai.request(server)
       .post('/api/v1/names')
       .send(
@@ -488,12 +499,12 @@ describe('Everything', () => {
         })
         .set('Authorization', process.env.TOKEN)
         .end((error, response) => {
-          response.should.have.status(201)
+          response.should.have.status(404)
           done()
         })
     })
 
-    it('should post a new name not depending on data type', (done) => {
+    it('should not post a new name not depending on data type', (done) => {
       chai.request(server)
       .post('/api/v1/names')
       .send(
@@ -504,7 +515,7 @@ describe('Everything', () => {
         })
         .set('Authorization', process.env.TOKEN)
         .end((error, response) => {
-          response.should.have.status(201)
+          response.should.have.status(404)
           done()
         })
     })
@@ -534,6 +545,68 @@ describe('Everything', () => {
       .post('/api/v1/names')
       .send({})
       .end((err, response) => {
+        response.should.have.status(403)
+        done()
+      })
+    })
+  })
+
+  describe('PATCH /api/v1/names/:id', () => {
+    it('should patch count for record', (done) => {
+      chai.request(server)
+      .post('/api/v1/names')
+      .set('Authorization', process.env.TOKEN)
+      .send(
+        {
+          name: 'RobbieCool',
+          gender: 'M',
+          count: 1,
+          year: 1880,
+        })
+        .set('Authorization', process.env.TOKEN)
+        .end((error, response) => {
+          response.should.have.status(201)
+          let id = response.body
+          chai.request(server)
+          .patch(`/api/v1/names/${id}`)
+          .set('Authorization', process.env.TOKEN)
+          .send({
+            count: 10,
+            year: 1880
+          })
+          .end((err, res) => {
+            res.status.should.equal(201)
+            chai.request(server)
+            .get('/api/v1/names?name=RobbieCool&gender=M&year=1880')
+            .end((error, response) => {
+              response.status.should.equal(200)
+              response.body[0][0].should.have.property('count')
+              response.body[0][0].count.should.equal(10)
+              done()
+            })
+          })
+        })
+    })
+
+    it('should not patch a record with missing data', (done) => {
+      chai.request(server)
+      .patch('/api/v1/names/94586')
+      .set('Authorization', process.env.TOKEN)
+      .send({})
+      .end((error, response) => {
+        response.should.have.status(422)
+        done()
+      })
+    })
+
+    it('should not let you patch if not authorized', (done) => {
+      chai.request(server)
+      .patch('/api/v1/names/94586')
+      .send({
+        count: 6,
+        year: 1880,
+      })
+      .end((error, response) => {
         response.should.have.status(403)
         done()
       })
