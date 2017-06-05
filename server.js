@@ -267,19 +267,16 @@ app.post('/api/v1/names', checkAuth, (request, response) => {
 })
 
 app.patch('/api/v1/names/:id', checkAuth, (request, response) => {
-  const gender = request.body.gender
-  const newCount = request.body.count
+  const count = request.body.count
   const year = request.body.year
 
-  database('names').where('id', request.params.id).andWhere('gender', gender)
-  .then(() => {
-    database('years').where('year', year).select('id')
-    .then(yearId => {
-      database('junction').where('name_id', request.params.id).andWhere('year_id', yearId[0].id).update({ count: newCount })
-    })
-    .then(update => {
-      response.status(200).send('updated')
-    })
+  database('years').where('year', year).select('id')
+  .then(yearId => {
+    console.log(yearId[0].id)
+    database('junction').where('name_id', request.params.id).andWhere('year_id', yearId[0].id).update({ count })
+  })
+  .then(update => {
+    response.status(201).send('updated')
   })
   .catch(() => {
     response.status(422).send('not updated')

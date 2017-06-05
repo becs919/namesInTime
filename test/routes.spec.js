@@ -554,12 +554,11 @@ describe('Everything', () => {
         .set('Authorization', process.env.TOKEN)
         .send(
           {
-            gender: 'F',
             count: 6,
             year: 1880,
           })
         .end((error, response) => {
-          response.should.have.status(200)
+          response.should.have.status(201)
           chai.request(server)
           .get(`/api/v1/names/${id}`)
           .end((error, response) => {
@@ -602,7 +601,6 @@ describe('Everything', () => {
       chai.request(server)
       .patch('/api/v1/names/94586')
       .send({
-        gender: 'F',
         count: 6,
         year: 1880,
       })
