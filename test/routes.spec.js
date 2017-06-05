@@ -552,9 +552,10 @@ describe('Everything', () => {
   })
 
   describe('PATCH /api/v1/names/:id', () => {
-    it.skip('should patch count for record', (done) => {
+    it('should patch count for record', (done) => {
       chai.request(server)
       .post('/api/v1/names')
+      .set('Authorization', process.env.TOKEN)
       .send(
         {
           name: 'RobbieCool',
@@ -578,9 +579,9 @@ describe('Everything', () => {
             chai.request(server)
             .get('/api/v1/names?name=RobbieCool&gender=M&year=1880')
             .end((error, response) => {
-              console.log(response)
               response.status.should.equal(200)
-              response.body[0].count.should.equal(10)
+              response.body[0][0].should.have.property('count')
+              response.body[0][0].count.should.equal(10)
               done()
             })
           })
