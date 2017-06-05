@@ -19,7 +19,7 @@
     }))
 
   d3.queue()
-    .defer(d3.csv, 'people.csv')
+    .defer(d3.csv, '../data/csv/yob1880.txt')
     .await(ready)
 
   function ready(error, datapoints) {
