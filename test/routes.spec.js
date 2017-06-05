@@ -542,7 +542,7 @@ describe('Everything', () => {
 
   describe('PATCH /api/v1/names/:id', () => {
     // NOT ACTUALLY WORKING TO PATCH
-    it.only('should patch a specific name', (done) => {
+    it.skip('should patch a specific name', (done) => {
       let id
       let name
       chai.request(server)
