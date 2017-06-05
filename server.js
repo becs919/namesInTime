@@ -3,11 +3,16 @@ const fs = require('fs')
 const app = express()
 const bodyParser = require('body-parser')
 const Promise = require('bluebird')
+const jwt = require('jsonwebtoken')
+const config = require('dotenv').config().parsed
 
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('./knexfile')[environment]
 const database = require('knex')(configuration)
 
+app.set('secretKey', process.env.CLIENT_SECRET || config.CLIENT_SECRET)
+const token = jwt.sign('user', app.get('secretKey'))
+console.log(token)
 app.set('port', process.env.PORT || 3000)
 app.locals.title = 'NamesInTime'
 
@@ -24,6 +29,31 @@ app.get('/', (request, response) => {
     response.send(file)
   })
 })
+
+const checkAuth = (request, response, next) => {
+  const token = request.body.token ||
+                request.params.token ||
+                request.headers['authorization']
+
+  if (token) {
+    jwt.verify(token, app.get('secretKey'), (error, decoded) => {
+      if (error) {
+        return response.status(403).send({
+          success: false,
+          message: 'Invalid authorization token.',
+        })
+      } else {
+        request.decoded = decoded
+        next()
+      }
+    })
+  } else {
+    return response.status(403).send({
+      success: false,
+      message: 'You must be authorized to hit this endpoint',
+    })
+  }
+}
 
 app.get('/api/v1/names', (request, response) => {
   const year = request.query.year
@@ -209,7 +239,7 @@ app.get('/api/v1/years/:id', (request, response) => {
     })
 })
 
-app.post('/api/v1/names', (request, response) => {
+app.post('/api/v1/names', checkAuth, (request, response) => {
   let nameId
   const {name, gender, count, year} = request.body
   database.transaction(trx => {
@@ -230,7 +260,7 @@ app.post('/api/v1/names', (request, response) => {
     })
   })
   .then(() => {
-    response.status(200).json('successful')
+    response.status(201).json('successful')
   })
   .catch(error => {
     response.status(404).json(error)
