@@ -539,4 +539,77 @@ describe('Everything', () => {
       })
     })
   })
+
+  describe('PATCH /api/v1/names/:id', () => {
+    // NOT ACTUALLY WORKING TO PATCH
+    it.only('should patch a specific name', (done) => {
+      let id
+      let name
+      chai.request(server)
+      .get('/api/v1/names')
+      .end((error, response) => {
+        id = response.body[0].id
+        chai.request(server)
+        .patch(`/api/v1/names/${id}`)
+        .set('Authorization', process.env.TOKEN)
+        .send(
+          {
+            gender: 'F',
+            count: 6,
+            year: 1880,
+          })
+        .end((error, response) => {
+          response.should.have.status(200)
+          chai.request(server)
+          .get(`/api/v1/names/${id}`)
+          .end((error, response) => {
+            name = response.body[0].name
+            response.should.have.status(200)
+            response.body.should.be.a('array')
+            response.body.length.should.equal(1)
+            response.body[0].should.have.property('id')
+            response.body[0].id.should.equal(id)
+            name = response.body[0].name
+            chai.request(server)
+            .get(`/api/v1/names?name=${name}&year=1880&gender=F`)
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body.should.be.a('array')
+              response.body.length.should.equal(1)
+              response.body[0][0].should.have.property('count')
+              response.body[0][0].count.should.equal(6)
+              response.body[0][0].should.have.property('id')
+              response.body[0][0].count.should.equal(id)
+              done()
+            })
+          })
+        })
+      })
+    })
+
+    it('should not patch a record with missing data', (done) => {
+      chai.request(server)
+      .patch('/api/v1/names/94586')
+      .set('Authorization', process.env.TOKEN)
+      .send({})
+      .end((error, response) => {
+        response.should.have.status(422)
+        done()
+      })
+    })
+
+    it('should not let you patch if not authorized', (done) => {
+      chai.request(server)
+      .patch('/api/v1/names/94586')
+      .send({
+        gender: 'F',
+        count: 6,
+        year: 1880,
+      })
+      .end((error, response) => {
+        response.should.have.status(403)
+        done()
+      })
+    })
+  })
 })

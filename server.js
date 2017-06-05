@@ -12,7 +12,6 @@ const database = require('knex')(configuration)
 
 app.set('secretKey', process.env.CLIENT_SECRET || config.CLIENT_SECRET)
 const token = jwt.sign('user', app.get('secretKey'))
-console.log(token)
 app.set('port', process.env.PORT || 3000)
 app.locals.title = 'NamesInTime'
 
@@ -264,6 +263,26 @@ app.post('/api/v1/names', checkAuth, (request, response) => {
   })
   .catch(error => {
     response.status(404).json(error)
+  })
+})
+
+app.patch('/api/v1/names/:id', checkAuth, (request, response) => {
+  const gender = request.body.gender
+  const newCount = request.body.count
+  const year = request.body.year
+
+  database('names').where('id', request.params.id).andWhere('gender', gender)
+  .then(() => {
+    database('years').where('year', year).select('id')
+    .then(yearId => {
+      database('junction').where('name_id', request.params.id).andWhere('year_id', yearId[0].id).update({ count: newCount })
+    })
+    .then(update => {
+      response.status(200).send('updated')
+    })
+  })
+  .catch(() => {
+    response.status(422).send('not updated')
   })
 })
 
