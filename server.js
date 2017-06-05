@@ -286,6 +286,21 @@ app.patch('/api/v1/names/:id', checkAuth, (request, response) => {
   })
 })
 
+app.delete('/api/v1/names/:id', checkAuth, (request, response) => {
+  const year = request.body.year
+
+  database('years').where('year', year).select('id')
+  .then(yearId => {
+    return database('junction').where('name_id', request.params.id).andWhere('year_id', yearId[0].id).delete()
+  })
+  .then(() => {
+    response.status(204).send('deleted')
+  })
+  .catch(() => {
+    response.status(404).send('nothing deleted')
+  })
+})
+
 if (!module.parent) {
   app.listen(app.get('port'), () => {
     console.log(`${app.locals.title} is running on ${app.get('port')}.`)
