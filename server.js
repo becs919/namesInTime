@@ -241,29 +241,33 @@ app.get('/api/v1/years/:id', (request, response) => {
 app.post('/api/v1/names', checkAuth, (request, response) => {
   let nameId
   const {name, gender, count, year} = request.body
-  database.transaction(trx => {
-    return trx('names').insert({name, gender}, 'id')
-    .then((ids) => {
-      nameId = ids[0]
-      return trx('years').where('year', year).select('id')
+  if (!name || !gender || !count || !year) {
+    response.sendStatus(404)
+  } else {
+    database.transaction(trx => {
+      return trx('names').insert({name, gender}, 'id')
+      .then((ids) => {
+        nameId = ids[0]
+        return trx('years').where('year', year).select('id')
+      })
+      .then((years) => {
+        if (!years.length) {
+          return trx('years').insert({year}, 'id')
+        } else {
+          return Promise.resolve([years[0].id])
+        }
+      })
+      .then((ids) => {
+        return trx('junction').insert({'year_id': ids[0], 'name_id': nameId, count})
+      })
     })
-    .then((years) => {
-      if (!years.length) {
-        return trx('years').insert({year}, 'id')
-      } else {
-        return Promise.resolve([years.id])
-      }
+    .then(() => {
+      response.status(201).json(nameId)
     })
-    .then((ids) => {
-      return trx('junction').insert({'year_id': ids[0], 'name_id': nameId, count})
+    .catch(error => {
+      response.status(404).json(error)
     })
-  })
-  .then(() => {
-    response.status(201).json('successful')
-  })
-  .catch(error => {
-    response.status(404).json(error)
-  })
+  }
 })
 
 app.patch('/api/v1/names/:id', checkAuth, (request, response) => {
@@ -272,8 +276,7 @@ app.patch('/api/v1/names/:id', checkAuth, (request, response) => {
 
   database('years').where('year', year).select('id')
   .then(yearId => {
-    console.log(yearId[0].id)
-    database('junction').where('name_id', request.params.id).andWhere('year_id', yearId[0].id).update({ count })
+    return database('junction').where('name_id', request.params.id).andWhere('year_id', yearId[0].id).update({ count })
   })
   .then(update => {
     response.status(201).send('updated')
