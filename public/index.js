@@ -24,7 +24,6 @@ $('#submit-button').on('click', event => {
 })
 
 const displayNameData = (data) => {
-  console.log(data[1][0].gender, data[0][0].gender)
   $('#name-data').css('display', 'block')
   $('#chart2').hide()
 
@@ -89,12 +88,12 @@ const fetchName = (name) => {
 }
 
 const fetchYear = (year) => {
+  $('#chart2').empty()
   fetch(`/api/v1/names?year=${year}`, {
     method: 'GET',
   }).then(response => {
     return response.json()
   }).then(json => {
-    $('#chart2').empty()
     queryBubble(json)
   }).catch(error => $error.text(error))
 }
@@ -116,12 +115,18 @@ const fetchYearName = (year, name) => {
 }
 
 const fetchNameGender = (name, gender) => {
+  $('#chart3').empty()
   fetch(`/api/v1/names?name=${name}&gender=${gender}`, {
     method: 'GET',
   }).then(response => {
     return response.json()
   }).then(json => {
-    console.log(json)
+    // MAY WANT TO USE CHART HERE
+    // USING IT FOR ONLY NAME & ALL GENDERS
+    let cleanData = json.reduce((a, b) => {
+      return a.concat(b)
+    }, [])
+    queryBubbleAllYears(cleanData)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -138,7 +143,7 @@ const fetchYearGender = (year, gender) => {
     if (!json.length) {
       $error.text('Error: No Matches')
     }
-    let cleanData = json.reduce((a, b)=> {
+    let cleanData = json.reduce((a, b) => {
       return a.concat(b)
     }, [])
     queryBubble(cleanData)
@@ -336,6 +341,84 @@ const queryBubble = (datapoints) => {
         .duration(200)
         .style('opacity', 0.9)
         toolTip.html(`${d.name}, ${d.gender} <br/>count: ${d.count}`)
+        .style('left', (d3.event.pageX) + 'px')
+        .style('top', (d3.event.pageY) + 'px')
+      })
+      .on('mouseout', d => {
+        toolTip.transition()
+          .duration(500)
+          .style('opacity', 0)
+      })
+
+  const ticked = () => {
+    circles
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+  }
+
+  simulation.nodes(datapoints)
+    .on('tick', ticked)
+}
+const queryBubbleAllYears = (datapoints) => {
+  console.log(datapoints)
+  $('#chart3').show()
+  $('#chart2').hide()
+  hideAnimation()
+
+  let width = 1024
+  let height = 1024
+
+  let margin = { top: 30 }
+
+  let svg = d3.select('#chart3')
+    .append('svg')
+    .attr('height', height)
+    .attr('width', width)
+    .append('g')
+    .attr('transform', 'translate(0,0)')
+
+  let toolTip = d3.select('body').append('div').attr('class', 'tooltip').style('opacity', 0)
+
+  let countRange = d3.extent(datapoints, d => d.count)
+
+  svg.append('text')
+    .attr('x', width / 2)
+    .attr('y', margin.top)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'title-3')
+    .text(`1880-2016 ${datapoints[0].name}, ${datapoints[0].gender}`)
+    .style('fill', 'white')
+
+  let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
+
+  let simulation = d3.forceSimulation()
+    .force('x', d3.forceX(width / 2).strength(0.05))
+    .force('y', d3.forceY(height / 2).strength(0.06))
+    .force('collide', d3.forceCollide(function (d) {
+      return radiusScale(d.count) + 2
+    }))
+
+  let circles = svg.selectAll('.people')
+      .data(datapoints)
+      .enter()
+      .append('circle')
+      .attr('class', 'people')
+      .attr('r', function (d) {
+        return radiusScale(d.count)
+      })
+      .each(function (d) {
+        let circle = d3.select(this)
+        if (d.gender === 'M') {
+          circle.attr('fill', '#91bdcf')
+        } else if (d.gender === 'F') {
+          circle.attr('fill', '#f79f9d')
+        }
+      })
+      .on('mouseover', d => {
+        toolTip.transition()
+        .duration(200)
+        .style('opacity', 0.9)
+        toolTip.html(`year: ${d.year} <br/>count: ${d.count}`)
         .style('left', (d3.event.pageX) + 'px')
         .style('top', (d3.event.pageY) + 'px')
       })

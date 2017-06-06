@@ -94,7 +94,7 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 23px auto;
 }
 
-#chart, #chart2 {
+#chart, #chart2, #chart3 {
   display: flex;
   justify-content: center;
 }
