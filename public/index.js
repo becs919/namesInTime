@@ -58,7 +58,9 @@ const fetchYear = (year) => {
   }).then(response => {
     return response.json()
   }).then(json => {
+    $('#chart2').empty()
     console.log(json)
+    queryBubble(json)
   }).catch(error => $error.text(error))
 }
 
@@ -125,6 +127,7 @@ const submitData = (name, year, gender) => {
       fetchName(name)
     } else if (year && !name) {
       $error.empty()
+      $('#chart').hide()
       fetchYear(year)
     } else if (name && year) {
       $error.empty()
@@ -156,8 +159,8 @@ const submitData = (name, year, gender) => {
 
 const bubbles = () => {
   console.log('in bubbles')
-  let width = 1400
-  let height = 1400
+  let width = 1000
+  let height = 1000
 
   let margin = { top: 20 }
 
@@ -236,4 +239,89 @@ const bubbles = () => {
   d3.queue()
   .defer(d3.csv, 'people.csv')
   .await(ready)
+}
+
+const queryBubble = (datapoints) => {
+  console.log(datapoints)
+  console.log('in bubbles2')
+  let width = 1000
+  let height = 1000
+
+  let margin = { top: 20 }
+
+  let svg = d3.select('#chart2')
+    .append('svg')
+    .attr('height', height)
+    .attr('width', width)
+    .append('g')
+    .attr('transform', 'translate(0,0)')
+
+  let toolTip = d3.select('body').append('div').attr('class', 'tooltip').style('opacity', 0)
+
+  let min = 1000
+  if (datapoints[0].year < 1980) {
+    min = 30
+  }
+
+  datapoints = datapoints.filter(entry => {
+    return entry.count > min
+  })
+
+  let countRange = d3.extent(datapoints, d => d.count)
+
+  svg.append('text')
+    .attr('x', width / 2)
+    .attr('y', margin.top)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'title')
+    .text(datapoints.year)
+    .style('fill', 'white')
+
+  let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
+
+  let simulation = d3.forceSimulation()
+    .force('x', d3.forceX(width / 2).strength(0.05))
+    .force('y', d3.forceY(height / 2).strength(0.05))
+    .force('collide', d3.forceCollide(function (d) {
+      return radiusScale(d.count) + 2
+    }))
+
+  let circles = svg.selectAll('.people')
+      .data(datapoints)
+      .enter()
+      .append('circle')
+      .attr('class', 'people')
+      .attr('r', function (d) {
+        return radiusScale(d.count)
+      })
+      .each(function (d) {
+        let circle = d3.select(this)
+        if (d.gender === 'M') {
+          circle.attr('fill', '#91bdcf')
+        } else if (d.gender === 'F') {
+          circle.attr('fill', '#f79f9d')
+        }
+      })
+      .on('mouseover', d => {
+        toolTip.transition()
+        .duration(200)
+        .style('opacity', 0.9)
+        toolTip.html(`${d.name}, ${d.gender} <br/>count: ${d.count}`)
+        .style('left', (d3.event.pageX) + 'px')
+        .style('top', (d3.event.pageY) + 'px')
+      })
+      .on('mouseout', d => {
+        toolTip.transition()
+          .duration(500)
+          .style('opacity', 0)
+      })
+
+  const ticked = () => {
+    circles
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+  }
+
+  simulation.nodes(datapoints)
+    .on('tick', ticked)
 }
