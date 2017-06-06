@@ -9,6 +9,9 @@ $('#submit-button').on('click', event => {
   const year = $('#year-search').val()
   const gender = $('#gender').val()
 
+  $('#name-data').css('display', 'none')
+  $('#chart').hide()
+
   if (year) {
     if (year <= 2016 && year >= 1880) {
       submitData(name, year, gender)
@@ -19,6 +22,30 @@ $('#submit-button').on('click', event => {
     submitData(name, year, gender)
   }
 })
+
+const displayNameData = (data) => {
+  $('#name-data').css('display', 'block')
+  $('#chart2').hide()
+
+  let gender = 'Female'
+  let gender2 = 'Female'
+
+  if (data[0][0].gender === 'M') {
+    gender = 'Male'
+  }
+
+  if (data[1][0].gender === 'M') {
+    gender2 = 'Male'
+  }
+
+  if (data[1][0].gender) {
+    $('.second-count').html(gender2 + ' ' + data[1][0].count)
+  }
+
+  $('.single-name').html(data[0][0].name)
+  $('.single-year').html(data[0][0].year)
+  $('.single-count').html(gender + ': ' + data[0][0].count)
+}
 
 const timeOut = () => {
   $('.spinner').show()
@@ -37,7 +64,7 @@ const fetchAllParams = (name, year, gender) => {
     if (!json.length) {
       $error.text('Error: No Matches')
     }
-    console.log(json)
+    displayNameData(json)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -61,24 +88,13 @@ const fetchName = (name) => {
 }
 
 const fetchYear = (year) => {
+  $('#chart2').empty()
   fetch(`/api/v1/names?year=${year}`, {
     method: 'GET',
   }).then(response => {
     return response.json()
   }).then(json => {
-    $('#chart2').empty()
-    console.log(json)
     queryBubble(json)
-  }).catch(error => $error.text(error))
-}
-
-const fetchGender = (gender) => {
-  fetch(`/api/v1/names?gender=${gender}`, {
-    method: 'GET',
-  }).then(response => {
-    return response.json()
-  }).then(json => {
-    console.log(json)
   }).catch(error => $error.text(error))
 }
 
@@ -91,7 +107,7 @@ const fetchYearName = (year, name) => {
     if (!json.length) {
       $error.text('Error: Invalid Name')
     }
-    console.log(json)
+    displayNameData(json)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -99,12 +115,18 @@ const fetchYearName = (year, name) => {
 }
 
 const fetchNameGender = (name, gender) => {
+  $('#chart3').empty()
   fetch(`/api/v1/names?name=${name}&gender=${gender}`, {
     method: 'GET',
   }).then(response => {
     return response.json()
   }).then(json => {
-    console.log(json)
+    // MAY WANT TO USE CHART HERE
+    // USING IT FOR ONLY NAME & ALL GENDERS
+    let cleanData = json.reduce((a, b) => {
+      return a.concat(b)
+    }, [])
+    queryBubbleAllYears(cleanData)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -112,6 +134,7 @@ const fetchNameGender = (name, gender) => {
 }
 
 const fetchYearGender = (year, gender) => {
+  $('#chart2').empty()
   fetch(`/api/v1/names?gender=${gender}&year=${year}`, {
     method: 'GET',
   }).then(response => {
@@ -120,8 +143,7 @@ const fetchYearGender = (year, gender) => {
     if (!json.length) {
       $error.text('Error: No Matches')
     }
-    $('#chart2').empty()
-    let cleanData = json.reduce((a, b)=> {
+    let cleanData = json.reduce((a, b) => {
       return a.concat(b)
     }, [])
     queryBubble(cleanData)
@@ -139,7 +161,6 @@ const submitData = (name, year, gender) => {
       fetchName(name)
     } else if (year && !name) {
       $error.empty()
-      $('#chart').hide()
       fetchYear(year)
     } else if (name && year) {
       $error.empty()
@@ -159,12 +180,10 @@ const submitData = (name, year, gender) => {
       fetchNameGender(name, gender)
     } else if (!name && year && gender) {
       $error.empty()
-      $('#chart').hide()
       timeOut()
       fetchYearGender(year, gender)
     } else if (!name && !year && gender) {
-      $error.empty()
-      fetchGender(gender)
+      $error.text('Error: Please Enter A Name or Year')
     } else {
       $error.text('Error: Please Enter A Name, Year, or Gender')
     }
@@ -173,10 +192,10 @@ const submitData = (name, year, gender) => {
 
 const bubbles = () => {
   console.log('in bubbles')
-  let width = 1000
-  let height = 1000
+  let width = 1024
+  let height = 1024
 
-  let margin = { top: 20 }
+  let margin = { top: 30 }
 
   let svg = d3.select('#chart')
     .append('svg')
@@ -199,14 +218,14 @@ const bubbles = () => {
       .attr('y', margin.top)
       .attr('text-anchor', 'middle')
       .attr('class', 'title')
-      .text(datapoints.year)
+      .text('Top Names of 2016')
       .style('fill', 'white')
 
     let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 30])
 
     let simulation = d3.forceSimulation()
       .force('x', d3.forceX(width / 2).strength(0.05))
-      .force('y', d3.forceY(height / 2).strength(0.05))
+      .force('y', d3.forceY(height / 2).strength(0.06))
       .force('collide', d3.forceCollide(function (d) {
         return radiusScale(d.count) + 2
       }))
@@ -256,13 +275,13 @@ const bubbles = () => {
 }
 
 const queryBubble = (datapoints) => {
+  $('#chart2').show()
   hideAnimation()
-  console.log(datapoints)
-  console.log('in bubbles2')
-  let width = 1000
-  let height = 1000
 
-  let margin = { top: 20 }
+  let width = 1024
+  let height = 1024
+
+  let margin = { top: 30 }
 
   let svg = d3.select('#chart2')
     .append('svg')
@@ -288,15 +307,15 @@ const queryBubble = (datapoints) => {
     .attr('x', width / 2)
     .attr('y', margin.top)
     .attr('text-anchor', 'middle')
-    .attr('class', 'title')
-    .text(datapoints.year)
+    .attr('class', 'title-2')
+    .text(`Top Names of ${datapoints[0].year}`)
     .style('fill', 'white')
 
   let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
 
   let simulation = d3.forceSimulation()
     .force('x', d3.forceX(width / 2).strength(0.05))
-    .force('y', d3.forceY(height / 2).strength(0.05))
+    .force('y', d3.forceY(height / 2).strength(0.06))
     .force('collide', d3.forceCollide(function (d) {
       return radiusScale(d.count) + 2
     }))
@@ -322,6 +341,84 @@ const queryBubble = (datapoints) => {
         .duration(200)
         .style('opacity', 0.9)
         toolTip.html(`${d.name}, ${d.gender} <br/>count: ${d.count}`)
+        .style('left', (d3.event.pageX) + 'px')
+        .style('top', (d3.event.pageY) + 'px')
+      })
+      .on('mouseout', d => {
+        toolTip.transition()
+          .duration(500)
+          .style('opacity', 0)
+      })
+
+  const ticked = () => {
+    circles
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+  }
+
+  simulation.nodes(datapoints)
+    .on('tick', ticked)
+}
+const queryBubbleAllYears = (datapoints) => {
+  console.log(datapoints)
+  $('#chart3').show()
+  $('#chart2').hide()
+  hideAnimation()
+
+  let width = 1024
+  let height = 1024
+
+  let margin = { top: 30 }
+
+  let svg = d3.select('#chart3')
+    .append('svg')
+    .attr('height', height)
+    .attr('width', width)
+    .append('g')
+    .attr('transform', 'translate(0,0)')
+
+  let toolTip = d3.select('body').append('div').attr('class', 'tooltip').style('opacity', 0)
+
+  let countRange = d3.extent(datapoints, d => d.count)
+
+  svg.append('text')
+    .attr('x', width / 2)
+    .attr('y', margin.top)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'title-3')
+    .text(`1880-2016 ${datapoints[0].name}, ${datapoints[0].gender}`)
+    .style('fill', 'white')
+
+  let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
+
+  let simulation = d3.forceSimulation()
+    .force('x', d3.forceX(width / 2).strength(0.05))
+    .force('y', d3.forceY(height / 2).strength(0.06))
+    .force('collide', d3.forceCollide(function (d) {
+      return radiusScale(d.count) + 2
+    }))
+
+  let circles = svg.selectAll('.people')
+      .data(datapoints)
+      .enter()
+      .append('circle')
+      .attr('class', 'people')
+      .attr('r', function (d) {
+        return radiusScale(d.count)
+      })
+      .each(function (d) {
+        let circle = d3.select(this)
+        if (d.gender === 'M') {
+          circle.attr('fill', '#91bdcf')
+        } else if (d.gender === 'F') {
+          circle.attr('fill', '#f79f9d')
+        }
+      })
+      .on('mouseover', d => {
+        toolTip.transition()
+        .duration(200)
+        .style('opacity', 0.9)
+        toolTip.html(`year: ${d.year} <br/>count: ${d.count}`)
         .style('left', (d3.event.pageX) + 'px')
         .style('top', (d3.event.pageY) + 'px')
       })

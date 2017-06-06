@@ -79,7 +79,7 @@ app.get('/api/v1/names', (request, response) => {
     database('names').whereRaw(`lower(name) = ?`, name.toLowerCase()).select('id')
       .then(names => {
         const namesArr = names.map(name => {
-          return database('junction').where('name_id', name.id).select('count').limit(10)
+          return database('junction').where('name_id', name.id).select('count')
           .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
           .join('years', 'junction.year_id', '=', 'years.id').select('year')
         })
@@ -150,7 +150,7 @@ app.get('/api/v1/names', (request, response) => {
     database('names').whereRaw(`lower(name) = ?`, name.toLowerCase()).andWhere('gender', gender).select('id')
       .then(genders => {
         const gendersArr = genders.map(gender => {
-          return database('junction').where('name_id', gender.id).select('count').limit(10)
+          return database('junction').where('name_id', gender.id).select('count')
           .join('names', 'names.id', '=', 'junction.name_id').select('names.name', 'names.gender')
           .join('years', 'junction.year_id', '=', 'years.id').select('year')
         })
