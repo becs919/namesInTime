@@ -13,28 +13,11 @@
 
   let toolTip = d3.select('body').append('div').attr('class', 'tooltip').style('opacity', 0)
 
-  // const getYear = () => {
-  //   fetch(`/api/v1/names?year=2016&gender=F`, {
-  //     method: 'GET',
-  //   }).then(response => {
-  //     return response.json()
-  //   }).then(json => {
-  //     console.log(json)
-  //     ready(json)
-  //   }).catch(error => $error.text(error))
-  // }
-
-  // getYear()
-
   d3.queue()
     .defer(d3.csv, 'people.csv')
     .await(ready)
 
   function ready(error, datapoints) {
-
-    // let newData = datapoints.map(entry => {
-    //   return entry[0]
-    // })
 
     datapoints = datapoints.filter(entry => {
       return entry.count > 1000
@@ -55,7 +38,7 @@
     let simulation = d3.forceSimulation()
       .force('x', d3.forceX(width / 2).strength(0.05))
       .force('y', d3.forceY(height / 2).strength(0.05))
-      .force('collide', d3.forceCollide(function(d) {
+      .force('collide', d3.forceCollide(function (d) {
         return radiusScale(d.count) + 2
       }))
 
@@ -67,7 +50,7 @@
         .attr('r', function (d) {
           return radiusScale(d.count)
         })
-        .each(function(d) {
+        .each(function (d) {
           var circle = d3.select(this)
           if (d.gender === 'M') {
             circle.attr('fill', '#91bdcf')
