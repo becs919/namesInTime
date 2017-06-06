@@ -64,7 +64,9 @@ describe('PATCH /api/v1/names/:id', () => {
           })
         })
     })
+  })
 
+  describe('Patch /api/v1/names/:id sad', () => {
     it('should not patch a record with missing data', (done) => {
       chai.request(server)
       .patch('/api/v1/names/94586')
