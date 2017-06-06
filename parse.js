@@ -49,4 +49,3 @@ let dest = `./data/data.json`
 jsonfile.writeFile(dest, newData, function (err) {
   console.error(err)
 })
-
