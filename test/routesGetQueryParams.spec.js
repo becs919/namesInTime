@@ -5,7 +5,6 @@ const chaiHttp = require('chai-http')
 const server = require('../server')
 const chai = require('chai')
 const should = chai.should()
-const expect = chai.expect
 const configuration = require('../knexfile')['test']
 const database = require('knex')(configuration)
 
