@@ -43,6 +43,21 @@ describe('GET /api/v1/names/ QUERY PARAMS', () => {
     })
   })
 
+  it('should return specific name - case insensitive', (done) => {
+    chai.request(server)
+    .get('/api/v1/names?name=mary')
+    .end((error, response) => {
+      response.should.have.status(200)
+      response.body.should.be.a('array')
+      response.body.length.should.equal(2)
+      response.body[0][0].should.have.property('name')
+      response.body[0][0].name.should.equal('Mary')
+      response.body[0][0].should.have.property('gender')
+      response.body[0][0].should.have.property('count')
+      done()
+    })
+  })
+
   it('should return 404 for a non existent route', (done) => {
     chai.request(server)
     .get('/api/v1/names?name=Maryy')
@@ -121,6 +136,24 @@ describe('GET /api/v1/names/ QUERY PARAMS', () => {
     })
   })
 
+  it('should return gender, name, and year - case sensitive', (done) => {
+    chai.request(server)
+    .get('/api/v1/names?gender=F&year=1880&name=emma')
+    .end((error, response) => {
+      response.should.have.status(200)
+      response.body.should.be.a('array')
+      response.body.length.should.equal(1)
+      response.body[0][0].should.have.property('name')
+      response.body[0][0].name.should.equal('Emma')
+      response.body[0][0].should.have.property('gender')
+      response.body[0][0].gender.should.equal('F')
+      response.body[0][0].should.have.property('count')
+      response.body[0][0].should.have.property('year')
+      response.body[0][0].year.should.equal(1880)
+      done()
+    })
+  })
+
   it('should return 404 for a non existent route for incorrect year', (done) => {
     chai.request(server)
     .get('/api/v1/names?gender=F&year=180&name=Erica')
@@ -176,6 +209,23 @@ describe('GET /api/v1/names/ QUERY PARAMS', () => {
     })
   })
 
+  it('should return gender and name - case sensative', (done) => {
+    chai.request(server)
+    .get('/api/v1/names?gender=F&name=emma')
+    .end((error, response) => {
+      response.should.have.status(200)
+      response.body.should.be.a('array')
+      response.body.length.should.equal(2)
+      response.body[0][0].should.have.property('name')
+      response.body[0][0].name.should.equal('Emma')
+      response.body[0][0].should.have.property('gender')
+      response.body[0][0].gender.should.equal('F')
+      response.body[0][0].should.have.property('count')
+      response.body[0][0].should.have.property('year')
+      done()
+    })
+  })
+
   it('should return 404 for a non existent route for incorrect gender', (done) => {
     chai.request(server)
     .get('/api/v1/names?gender=Female&name=Erica')
@@ -208,6 +258,24 @@ describe('GET /api/v1/names/ QUERY PARAMS', () => {
   it('should return name and year', (done) => {
     chai.request(server)
     .get('/api/v1/names?name=Emma&year=1880')
+    .end((error, response) => {
+      response.should.have.status(200)
+      response.body.should.be.a('array')
+      response.body.length.should.equal(1)
+      response.body[0][0].should.have.property('name')
+      response.body[0][0].name.should.equal('Emma')
+      response.body[0][0].should.have.property('gender')
+      response.body[0][0].gender.should.equal('F')
+      response.body[0][0].should.have.property('count')
+      response.body[0][0].should.have.property('year')
+      response.body[0][0].year.should.equal(1880)
+      done()
+    })
+  })
+
+  it('should return name and year - case insensitive', (done) => {
+    chai.request(server)
+    .get('/api/v1/names?name=emma&year=1880')
     .end((error, response) => {
       response.should.have.status(200)
       response.body.should.be.a('array')
