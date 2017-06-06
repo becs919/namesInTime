@@ -9,6 +9,9 @@ $('#submit-button').on('click', event => {
   const year = $('#year-search').val()
   const gender = $('#gender').val()
 
+  $('#name-data').css('display', 'none')
+  $('#chart').hide()
+
   if (year) {
     if (year <= 2016 && year >= 1880) {
       submitData(name, year, gender)
@@ -19,6 +22,23 @@ $('#submit-button').on('click', event => {
     submitData(name, year, gender)
   }
 })
+
+const displayNameData = (data) => {
+  console.log(data[0][0].name, data[0][0].gender, data[0][0].count, data[0][0].year)
+  $('#name-data').css('display', 'block')
+  $('#chart2').hide()
+
+  let gender = 'Female'
+
+  if (data[0][0].gender === 'M') {
+    gender = 'Male'
+  }
+
+  $('.single-name').html(data[0][0].name)
+  $('.single-gender').html(gender)
+  $('.single-year').html(data[0][0].year)
+  $('.single-count').html(data[0][0].count)
+}
 
 const timeOut = () => {
   $('.spinner').show()
@@ -37,7 +57,7 @@ const fetchAllParams = (name, year, gender) => {
     if (!json.length) {
       $error.text('Error: No Matches')
     }
-    console.log(json)
+    displayNameData(json)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -67,18 +87,7 @@ const fetchYear = (year) => {
     return response.json()
   }).then(json => {
     $('#chart2').empty()
-    console.log(json)
     queryBubble(json)
-  }).catch(error => $error.text(error))
-}
-
-const fetchGender = (gender) => {
-  fetch(`/api/v1/names?gender=${gender}`, {
-    method: 'GET',
-  }).then(response => {
-    return response.json()
-  }).then(json => {
-    console.log(json)
   }).catch(error => $error.text(error))
 }
 
@@ -112,6 +121,7 @@ const fetchNameGender = (name, gender) => {
 }
 
 const fetchYearGender = (year, gender) => {
+  $('#chart2').empty()
   fetch(`/api/v1/names?gender=${gender}&year=${year}`, {
     method: 'GET',
   }).then(response => {
@@ -120,7 +130,6 @@ const fetchYearGender = (year, gender) => {
     if (!json.length) {
       $error.text('Error: No Matches')
     }
-    $('#chart2').empty()
     let cleanData = json.reduce((a, b)=> {
       return a.concat(b)
     }, [])
@@ -139,7 +148,6 @@ const submitData = (name, year, gender) => {
       fetchName(name)
     } else if (year && !name) {
       $error.empty()
-      $('#chart').hide()
       fetchYear(year)
     } else if (name && year) {
       $error.empty()
@@ -159,12 +167,10 @@ const submitData = (name, year, gender) => {
       fetchNameGender(name, gender)
     } else if (!name && year && gender) {
       $error.empty()
-      $('#chart').hide()
       timeOut()
       fetchYearGender(year, gender)
     } else if (!name && !year && gender) {
-      $error.empty()
-      fetchGender(gender)
+      $error.text('Error: Please Enter A Name or Year')
     } else {
       $error.text('Error: Please Enter A Name, Year, or Gender')
     }
