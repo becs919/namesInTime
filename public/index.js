@@ -20,6 +20,14 @@ $('#submit-button').on('click', event => {
   }
 })
 
+const timeOut = () => {
+  $('.spinner').show()
+}
+
+const hideAnimation = () => {
+  $('.spinner').hide()
+}
+
 const fetchAllParams = (name, year, gender) => {
   fetch(`/api/v1/names?name=${name}&year=${year}&gender=${gender}`, {
     method: 'GET',
@@ -116,7 +124,6 @@ const fetchYearGender = (year, gender) => {
     let cleanData = json.reduce((a, b)=> {
       return a.concat(b)
     }, [])
-    console.log(cleanData)
     queryBubble(cleanData)
   }).catch(error => {
     $error.text('Error: No Matches')
@@ -153,6 +160,7 @@ const submitData = (name, year, gender) => {
     } else if (!name && year && gender) {
       $error.empty()
       $('#chart').hide()
+      timeOut()
       fetchYearGender(year, gender)
     } else if (!name && !year && gender) {
       $error.empty()
@@ -248,6 +256,7 @@ const bubbles = () => {
 }
 
 const queryBubble = (datapoints) => {
+  hideAnimation()
   console.log(datapoints)
   console.log('in bubbles2')
   let width = 1000
