@@ -112,7 +112,12 @@ const fetchYearGender = (year, gender) => {
     if (!json.length) {
       $error.text('Error: No Matches')
     }
-    console.log(json)
+    $('#chart2').empty()
+    let cleanData = json.reduce((a, b)=> {
+      return a.concat(b)
+    }, [])
+    console.log(cleanData)
+    queryBubble(cleanData)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -147,6 +152,7 @@ const submitData = (name, year, gender) => {
       fetchNameGender(name, gender)
     } else if (!name && year && gender) {
       $error.empty()
+      $('#chart').hide()
       fetchYearGender(year, gender)
     } else if (!name && !year && gender) {
       $error.empty()
