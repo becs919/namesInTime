@@ -28,6 +28,13 @@ describe('GET /api/v1/names/ QUERY PARAMS', () => {
     })
   })
 
+  after((done) => {
+    database.destroy()
+    .then(() => {
+      done()
+    })
+  })
+
   describe('Get /api/v1/names? names', () => {
     it('should return specific name', (done) => {
       chai.request(server)

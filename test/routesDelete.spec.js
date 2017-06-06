@@ -28,6 +28,13 @@ describe('DELETE /api/v1/names/:id', () => {
    })
   })
 
+  after((done) => {
+    database.destroy()
+    .then(() => {
+      done()
+    })
+  })
+
   describe('Delete /api/v1/names/:id', () => {
     it('should delete name and junction record', (done) => {
       chai.request(server)

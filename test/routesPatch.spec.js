@@ -28,6 +28,13 @@ describe('PATCH /api/v1/names/:id', () => {
    })
   })
 
+  after((done) => {
+    database.destroy()
+    .then(() => {
+      done()
+    })
+  })
+
   describe('Patch /api/v1/names/:id', () => {
     it('should patch count for record', (done) => {
       chai.request(server)

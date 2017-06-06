@@ -26,6 +26,13 @@ describe('PATCH /api/v1/names/:id', () => {
    })
   })
 
+  after((done) => {
+    database.destroy()
+    .then(() => {
+      done()
+    })
+  })
+
   describe('Post /api/vq/names/:id', () => {
     it('should post a new name', (done) => {
       chai.request(server)
