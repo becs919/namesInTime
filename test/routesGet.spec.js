@@ -28,6 +28,13 @@ describe('GET /api/v1/years', () => {
     })
   })
 
+  after((done) => {
+    database.destroy()
+    .then(() => {
+      done()
+    })
+  })
+
   describe('GET /api/v1/years', () => {
     it('should return all of the years', (done) => {
       chai.request(server)
