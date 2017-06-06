@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 process.env.NODE_ENV = 'test'
 const chaiHttp = require('chai-http')
 const server = require('../server')
@@ -10,25 +8,25 @@ const database = require('knex')(configuration)
 
 chai.use(chaiHttp)
 
-describe('POST /api/v1/names', () => {
+describe('PATCH /api/v1/names/:id', () => {
   before((done) => {
     database.migrate.latest()
-    .then(() => {
-      return database.seed.run()
-    })
-    .then(() => {
-      done()
-    })
+   .then(() => {
+     return database.seed.run()
+   })
+   .then(() => {
+     done()
+   })
   })
 
   beforeEach((done) => {
     database.seed.run()
-    .then(() => {
-      done()
-    })
+   .then(() => {
+     done()
+   })
   })
 
-  describe('Post Routes happy path', () => {
+  describe('Post /api/vq/names/:id', () => {
     it('should post a new name', (done) => {
       chai.request(server)
       .post('/api/v1/names')
