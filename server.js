@@ -15,8 +15,8 @@ const token = jwt.sign('user', app.get('secretKey'))
 app.set('port', process.env.PORT || 3000)
 app.locals.title = 'NamesInTime'
 
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(express.static('public'))
 
