@@ -172,7 +172,7 @@ app.get('/api/v1/names', (request, response) => {
     database('years').where('year', year).select('id')
       .then((year) => {
         yearId = year[0].id
-        return database('names').where('gender', gender).select('id').limit(25)
+        return database('names').where('gender', gender).select('id').limit(300)
       })
       .then((genders) => {
         return Promise.map(genders, (gender) => {
