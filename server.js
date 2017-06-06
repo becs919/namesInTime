@@ -76,7 +76,7 @@ app.get('/api/v1/names', (request, response) => {
         response.status(404).json(error)
       })
   } else if (name && !year && !gender) {
-    database('names').where('name', name).select('id')
+    database('names').whereRaw(`lower(name) = ?`, name.toLowerCase()).select('id')
       .then(names => {
         const namesArr = names.map(name => {
           return database('junction').where('name_id', name.id).select('count').limit(10)
@@ -100,7 +100,7 @@ app.get('/api/v1/names', (request, response) => {
     database('years').where('year', year).select('id')
       .then((year) => {
         yearId = year[0].id
-        return database('names').where('name', name).select('id')
+        return database('names').whereRaw(`lower(name) = ?`, name.toLowerCase()).select('id')
       })
       .then((names) => {
         return Promise.map(names, (name) => {
@@ -126,7 +126,7 @@ app.get('/api/v1/names', (request, response) => {
     database('years').where('year', year).select('id')
     .then((year) => {
       yearId = year[0].id
-      return database('names').where('name', name).andWhere('gender', gender).select('id')
+      return database('names').whereRaw(`lower(name) = ?`, name.toLowerCase()).andWhere('gender', gender).select('id')
     })
     .then((names) => {
       return Promise.map(names, (name) => {
@@ -147,7 +147,7 @@ app.get('/api/v1/names', (request, response) => {
       response.status(404).json(error)
     })
   } else if (name && !year && gender) {
-    database('names').where('name', name).andWhere('gender', gender).select('id')
+    database('names').whereRaw(`lower(name) = ?`, name.toLowerCase()).andWhere('gender', gender).select('id')
       .then(genders => {
         const gendersArr = genders.map(gender => {
           return database('junction').where('name_id', gender.id).select('count').limit(10)

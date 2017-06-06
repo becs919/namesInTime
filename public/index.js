@@ -26,7 +26,10 @@ const fetchAllParams = (name, year, gender) => {
       $error.text('Error: No Matches')
     }
     console.log(json)
-  }).catch(error => $error.text(error))
+  }).catch(error => {
+    $error.text('Error: No Matches')
+    console.error(error)
+  })
 }
 
 const fetchName = (name) => {
@@ -75,7 +78,10 @@ const fetchYearName = (year, name) => {
       $error.text('Error: Invalid Name')
     }
     console.log(json)
-  }).catch(error => $error.text(error))
+  }).catch(error => {
+    $error.text('Error: No Matches')
+    console.error(error)
+  })
 }
 
 const fetchNameGender = (name, gender) => {
@@ -85,7 +91,10 @@ const fetchNameGender = (name, gender) => {
     return response.json()
   }).then(json => {
     console.log(json)
-  }).catch(error => $error.text(error))
+  }).catch(error => {
+    $error.text('Error: No Matches')
+    console.error(error)
+  })
 }
 
 const fetchYearGender = (year, gender) => {
@@ -98,7 +107,10 @@ const fetchYearGender = (year, gender) => {
       $error.text('Error: No Matches')
     }
     console.log(json)
-  }).catch(error => $error.text(error))
+  }).catch(error => {
+    $error.text('Error: No Matches')
+    console.error(error)
+  })
 }
 
 const submitData = (name, year, gender) => {
