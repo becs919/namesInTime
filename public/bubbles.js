@@ -1,6 +1,8 @@
 (function () {
-  let width = 800,
-    height = 800
+  let width = 1400,
+    height = 1400
+
+  let margin = { top: 20 }
 
   let svg = d3.select('#chart')
     .append('svg')
@@ -9,31 +11,82 @@
     .append('g')
     .attr('transform', 'translate(0,0)')
 
-  let radiusScale = d3.scaleSqrt().domain([78, 9532]).range([10, 80])
+  let toolTip = d3.select('body').append('div').attr('class', 'tooltip').style('opacity', 0)
 
-  let simulation = d3.forceSimulation()
-    .force('x', d3.forceX(width / 2).strength(0.05))
-    .force('y', d3.forceY(height / 2).strength(0.05))
-    .force('collide', d3.forceCollide(function(d) {
-      return radiusScale(d.count) + 1
-    }))
+  // const getYear = () => {
+  //   fetch(`/api/v1/names?year=2016&gender=F`, {
+  //     method: 'GET',
+  //   }).then(response => {
+  //     return response.json()
+  //   }).then(json => {
+  //     console.log(json)
+  //     ready(json)
+  //   }).catch(error => $error.text(error))
+  // }
+
+  // getYear()
 
   d3.queue()
-    .defer(d3.csv, '../data/csv/yob1880.txt')
+    .defer(d3.csv, 'people.csv')
     .await(ready)
 
   function ready(error, datapoints) {
 
+    // let newData = datapoints.map(entry => {
+    //   return entry[0]
+    // })
+
+    datapoints = datapoints.filter(entry => {
+      return entry.count > 1000
+    })
+
+    let countRange = d3.extent(datapoints, d => d.count)
+
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.top)
+      .attr('text-anchor', 'middle')
+      .attr('class', 'title')
+      .text(datapoints.year)
+      .style('fill', 'white')
+
+    let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 30])
+
+    let simulation = d3.forceSimulation()
+      .force('x', d3.forceX(width / 2).strength(0.05))
+      .force('y', d3.forceY(height / 2).strength(0.05))
+      .force('collide', d3.forceCollide(function(d) {
+        return radiusScale(d.count) + 2
+      }))
+
     let circles = svg.selectAll('.people')
         .data(datapoints)
-        .enter().append('circle')
+        .enter()
+        .append('circle')
         .attr('class', 'people')
         .attr('r', function (d) {
           return radiusScale(d.count)
         })
-        .attr('fill', 'lightblue')
-        .on('click', function (d) {
-          console.log(d);
+        .each(function(d) {
+          var circle = d3.select(this)
+          if (d.gender === 'M') {
+            circle.attr('fill', '#91bdcf')
+          } else if (d.gender === 'F') {
+            circle.attr('fill', '#f79f9d')
+          }
+        })
+        .on('mouseover', (d) => {
+          toolTip.transition()
+          .duration(200)
+          .style('opacity', .9)
+          toolTip.html(`${d.name}, ${d.gender} <br/>count: ${d.count}`)
+          .style('left', (d3.event.pageX) + 'px')
+          .style('top', (d3.event.pageY) + 'px')
+        })
+        .on('mouseout', d => {
+          toolTip.transition()
+            .duration(500)
+            .style('opacity', 0)
         })
 
     simulation.nodes(datapoints)
@@ -41,12 +94,8 @@
 
     function ticked() {
       circles
-        .attr('cx', function (d) {
-          return d.x
-        })
-        .attr('cy', function (d) {
-          return d.y
-        })
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
     }
   }
 })()
