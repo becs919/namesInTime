@@ -1,146 +1,155 @@
-/*
-#50514F
-#F25F5C
-#FFE066
-#247BA0
-#70C1B3
-*/
+/* #50514F #F25F5C #FFE066 #247BA0 #70C1B3 */
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #50514F;
+  background-color : #50514F;
+  font-family      : 'Poppins',
+                     sans-serif;
 }
 
 header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60px;
-  background-color: #247BA0;
-  color: white;
-  font-weight: 500;
-  font-size: 30px;
+  display          : flex;
+  height           : 60px;
+  color            : white;
+  background-color : #247BA0;
+  align-items      : center;
+  font-size        : 30px;
+  font-weight      : 500;
+  justify-content  : center;
 }
 
 #submit-button {
-  background-color: #F25F5C;
-  margin-left: 10px;
-  color: white;
+  margin-left      : 10px;
+  color            : white;
+  background-color : #F25F5C;
 }
 
 #input-section {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
+  display         : flex;
+  margin-top      : 20px;
+  justify-content : center;
 }
 
-#year-search, #gender {
-  margin-left: 5px;
+#gender,
+#year-search {
+  margin-left : 5px;
 }
 
-#year-search, #name-search {
-  border-radius: 5px;
-  border: none;
-  padding: 3px;
-  outline: none;
+#name-search,
+#year-search {
+  padding       : 3px;
+  border        : none;
+  border-radius : 5px;
+  outline       : none;
 }
 
-#gender, #submit-button {
-  outline: none;
-  border: none;
+#gender,
+#submit-button {
+  border  : none;
+  outline : none;
 }
 
 #error-msg {
-  color: #F25F5C;
-  text-align: center;
-  margin-top: 10px;
+  margin-top : 10px;
+  color      : #F25F5C;
+  text-align : center;
 }
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  -webkit-appearance : none;
+  margin             : 0;
 }
 
 #year-search {
-  width: 110px;
+  width : 110px;
 }
 
 .tooltip {
-  position: absolute;
-  text-align: center;
-  padding: 10px;
-  border: 0;
-  border-radius: 5px;
-  background: white;
-  pointer-events: none;
+  position       : absolute;
+  padding        : 10px;
+  border         : 0;
+  border-radius  : 5px;
+  background     : white;
+  text-align     : center;
+  pointer-events : none;
 }
 
 .spinner {
-  margin: 100px auto;
-  width: 50px;
-  height: 40px;
-  text-align: center;
-  font-size: 10px;
-  display: none;
+  display    : none;
+  width      : 50px;
+  height     : 40px;
+  margin     : 100px auto;
+  text-align : center;
+  font-size  : 10px;
 }
 
 #name-data {
-  display: none;
-  background-color: white;
-  color: black;
-  height: 200px;
-  width: 200px;
-  margin: 23px auto;
+  display          : none;
+  width            : 200px;
+  height           : 200px;
+  margin           : 23px auto;
+  color            : black;
+  background-color : white;
 }
 
-#chart, #chart2, #chart3 {
-  display: flex;
-  justify-content: center;
+#chart,
+#chart2,
+#chart3 {
+  display         : flex;
+  justify-content : center;
 }
 
 .spinner > div {
-  background-color: white;
-  height: 100%;
-  width: 6px;
-  display: inline-block;
-  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
-  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  display           : inline-block;
+  width             : 6px;
+  height            : 100%;
+  background-color  : white;
+  -webkit-animation : sk-stretchdelay 1.2s infinite ease-in-out;
+  animation         : sk-stretchdelay 1.2s infinite ease-in-out;
 }
 
 .spinner .rect2 {
-  -webkit-animation-delay: -1.1s;
-  animation-delay: -1.1s;
+  -webkit-animation-delay : -1.1s;
+  animation-delay         : -1.1s;
 }
 
 .spinner .rect3 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
+  -webkit-animation-delay : -1.0s;
+  animation-delay         : -1.0s;
 }
 
 .spinner .rect4 {
-  -webkit-animation-delay: -0.9s;
-  animation-delay: -0.9s;
+  -webkit-animation-delay : -0.9s;
+  animation-delay         : -0.9s;
 }
 
 .spinner .rect5 {
-  -webkit-animation-delay: -0.8s;
-  animation-delay: -0.8s;
+  -webkit-animation-delay : -0.8s;
+  animation-delay         : -0.8s;
 }
 
 @-webkit-keyframes sk-stretchdelay {
-  0%, 40%, 100% {
-    -webkit-transform: scaleY(0.4); }
-  20% {
-    -webkit-transform: scaleY(1); }
+  0%,
+  40%,
+  100% {
+    -webkit-transform : scaleY(0.4);
   }
+  
+  20% {
+    -webkit-transform : scaleY(1);
+  }
+}
 
 @keyframes sk-stretchdelay {
-  0%, 40%, 100% {
-    transform: scaleY(0.4);
-    -webkit-transform: scaleY(0.4);
+  0%,
+  40%,
+  100% {
+    -webkit-transform : scaleY(0.4);
+    transform         : scaleY(0.4);
   }
+
   20% {
-    transform: scaleY(1);
-    -webkit-transform: scaleY(1); }
+    -webkit-transform : scaleY(1);
+    transform         : scaleY(1);
   }
+}
