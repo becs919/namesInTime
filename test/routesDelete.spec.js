@@ -28,60 +28,62 @@ describe('DELETE /api/v1/names/:id', () => {
    })
   })
 
-  it('should delete name and junction record', (done) => {
-    chai.request(server)
-    .post('/api/v1/names')
-    .set('Authorization', process.env.TOKEN)
-    .send(
-      {
-        name: 'RobbieCool',
-        gender: 'M',
-        count: 1,
-        year: 1880,
-      })
+  describe('Delete /api/v1/names/:id', () => {
+    it('should delete name and junction record', (done) => {
+      chai.request(server)
+      .post('/api/v1/names')
       .set('Authorization', process.env.TOKEN)
-      .end((error, response) => {
-        response.should.have.status(201)
-        let id = response.body
-        chai.request(server)
-        .delete(`/api/v1/names/${id}`)
-        .set('Authorization', process.env.TOKEN)
-        .send({
+      .send(
+        {
+          name: 'RobbieCool',
+          gender: 'M',
+          count: 1,
           year: 1880,
         })
-        .end((err, res) => {
-          res.status.should.equal(204)
+        .set('Authorization', process.env.TOKEN)
+        .end((error, response) => {
+          response.should.have.status(201)
+          let id = response.body
           chai.request(server)
-          .get(`/api/v1/names?name=RobbieCool&gender=M&year=1880`)
-          .end((error, response) => {
-            response.status.should.equal(404)
-            done()
+          .delete(`/api/v1/names/${id}`)
+          .set('Authorization', process.env.TOKEN)
+          .send({
+            year: 1880,
+          })
+          .end((err, res) => {
+            res.status.should.equal(204)
+            chai.request(server)
+            .get(`/api/v1/names?name=RobbieCool&gender=M&year=1880`)
+            .end((error, response) => {
+              response.status.should.equal(404)
+              done()
+            })
           })
         })
+    })
+
+    it('should not delete a record with missing data', (done) => {
+      chai.request(server)
+      .delete('/api/v1/names/94586')
+      .set('Authorization', process.env.TOKEN)
+      .send({})
+      .end((error, response) => {
+        response.should.have.status(404)
+        done()
       })
-  })
-
-  it('should not delete a record with missing data', (done) => {
-    chai.request(server)
-    .delete('/api/v1/names/94586')
-    .set('Authorization', process.env.TOKEN)
-    .send({})
-    .end((error, response) => {
-      response.should.have.status(404)
-      done()
     })
-  })
 
-  it('should not let you delete if not authorized', (done) => {
-    chai.request(server)
-    .delete('/api/v1/names/94586')
-    .send({
-      gender: 'M',
-      year: 1880,
-    })
-    .end((error, response) => {
-      response.should.have.status(403)
-      done()
+    it('should not let you delete if not authorized', (done) => {
+      chai.request(server)
+      .delete('/api/v1/names/94586')
+      .send({
+        gender: 'M',
+        year: 1880,
+      })
+      .end((error, response) => {
+        response.should.have.status(403)
+        done()
+      })
     })
   })
 })

@@ -27,7 +27,8 @@ describe('POST /api/v1/names', () => {
       done()
     })
   })
-  describe('Post Routes', () => {
+
+  describe('Post Routes happy path', () => {
     it('should post a new name', (done) => {
       chai.request(server)
       .post('/api/v1/names')
@@ -57,7 +58,9 @@ describe('POST /api/v1/names', () => {
           })
         })
     })
+  })
 
+  describe('Post Routes sad paths', () => {
     it('should not post a new name if missing year', (done) => {
       chai.request(server)
       .post('/api/v1/names')
