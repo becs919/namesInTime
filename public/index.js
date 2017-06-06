@@ -24,8 +24,10 @@ $('#submit-button').on('click', event => {
 })
 
 const displayNameData = (data) => {
+  console.log('displayname', data)
   $('#name-data').css('display', 'block')
   $('#chart2').hide()
+  $('#chart3').hide()
 
   let gender = 'Female'
   let gender2 = 'Female'
@@ -34,11 +36,15 @@ const displayNameData = (data) => {
     gender = 'Male'
   }
 
-  if (data[1][0].gender === 'M') {
-    gender2 = 'Male'
+  if (!data[1]) {
+    $('.second-count').hide()
   }
 
-  if (data[1][0].gender) {
+  if (data[1]) {
+    $('.second-count').show()
+    if (data[1][0].gender === 'M') {
+      gender2 = 'Male'
+    }
     $('.second-count').html(gender2 + ' ' + data[1][0].count)
   }
 
@@ -72,6 +78,8 @@ const fetchAllParams = (name, year, gender) => {
 }
 
 const fetchName = (name) => {
+  $('#chart3').empty()
+  $('#chart2').hide()
   fetch(`/api/v1/names?name=${name}`, {
     method: 'GET',
   }).then(response => {
@@ -80,7 +88,11 @@ const fetchName = (name) => {
     if (!json.length) {
       $error.text('Error: Invalid Name')
     }
-    console.log(json)
+    // WAITING TO USE CHART HERE FROM ERIC
+    let cleanData = json.reduce((a, b) => {
+      return a.concat(b)
+    }, [])
+    queryBubbleAllYears(cleanData)
   }).catch(error => {
     $error.text('Error: No Matching Name')
     console.error(error)
@@ -99,6 +111,8 @@ const fetchYear = (year) => {
 }
 
 const fetchYearName = (year, name) => {
+  $('#chart2').hide()
+  $('#chart3').hide()
   fetch(`/api/v1/names?name=${name}&year=${year}`, {
     method: 'GET',
   }).then(response => {
@@ -116,6 +130,7 @@ const fetchYearName = (year, name) => {
 
 const fetchNameGender = (name, gender) => {
   $('#chart3').empty()
+  $('#chart2').hide()
   fetch(`/api/v1/names?name=${name}&gender=${gender}`, {
     method: 'GET',
   }).then(response => {
