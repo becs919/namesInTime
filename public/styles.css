@@ -94,6 +94,11 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 23px auto;
 }
 
+#chart, #chart2 {
+  display: flex;
+  justify-content: center;
+}
+
 .spinner > div {
   background-color: white;
   height: 100%;

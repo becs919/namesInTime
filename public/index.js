@@ -24,20 +24,28 @@ $('#submit-button').on('click', event => {
 })
 
 const displayNameData = (data) => {
-  console.log(data[0][0].name, data[0][0].gender, data[0][0].count, data[0][0].year)
+  console.log(data[1][0].gender, data[0][0].gender)
   $('#name-data').css('display', 'block')
   $('#chart2').hide()
 
   let gender = 'Female'
+  let gender2 = 'Female'
 
   if (data[0][0].gender === 'M') {
     gender = 'Male'
   }
 
+  if (data[1][0].gender === 'M') {
+    gender2 = 'Male'
+  }
+
+  if (data[1][0].gender) {
+    $('.second-count').html(gender2 + ' ' + data[1][0].count)
+  }
+
   $('.single-name').html(data[0][0].name)
-  $('.single-gender').html(gender)
   $('.single-year').html(data[0][0].year)
-  $('.single-count').html(data[0][0].count)
+  $('.single-count').html(gender + ': ' + data[0][0].count)
 }
 
 const timeOut = () => {
@@ -100,7 +108,7 @@ const fetchYearName = (year, name) => {
     if (!json.length) {
       $error.text('Error: Invalid Name')
     }
-    console.log(json)
+    displayNameData(json)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -179,10 +187,10 @@ const submitData = (name, year, gender) => {
 
 const bubbles = () => {
   console.log('in bubbles')
-  let width = 1000
-  let height = 1000
+  let width = 1024
+  let height = 1024
 
-  let margin = { top: 20 }
+  let margin = { top: 30 }
 
   let svg = d3.select('#chart')
     .append('svg')
@@ -205,14 +213,14 @@ const bubbles = () => {
       .attr('y', margin.top)
       .attr('text-anchor', 'middle')
       .attr('class', 'title')
-      .text(datapoints.year)
+      .text('Top Names of 2016')
       .style('fill', 'white')
 
     let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 30])
 
     let simulation = d3.forceSimulation()
       .force('x', d3.forceX(width / 2).strength(0.05))
-      .force('y', d3.forceY(height / 2).strength(0.05))
+      .force('y', d3.forceY(height / 2).strength(0.06))
       .force('collide', d3.forceCollide(function (d) {
         return radiusScale(d.count) + 2
       }))
@@ -262,13 +270,13 @@ const bubbles = () => {
 }
 
 const queryBubble = (datapoints) => {
+  $('#chart2').show()
   hideAnimation()
-  console.log(datapoints)
-  console.log('in bubbles2')
-  let width = 1000
-  let height = 1000
 
-  let margin = { top: 20 }
+  let width = 1024
+  let height = 1024
+
+  let margin = { top: 30 }
 
   let svg = d3.select('#chart2')
     .append('svg')
@@ -294,15 +302,15 @@ const queryBubble = (datapoints) => {
     .attr('x', width / 2)
     .attr('y', margin.top)
     .attr('text-anchor', 'middle')
-    .attr('class', 'title')
-    .text(datapoints.year)
+    .attr('class', 'title-2')
+    .text(`Top Names of ${datapoints[0].year}`)
     .style('fill', 'white')
 
   let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
 
   let simulation = d3.forceSimulation()
     .force('x', d3.forceX(width / 2).strength(0.05))
-    .force('y', d3.forceY(height / 2).strength(0.05))
+    .force('y', d3.forceY(height / 2).strength(0.06))
     .force('collide', d3.forceCollide(function (d) {
       return radiusScale(d.count) + 2
     }))
