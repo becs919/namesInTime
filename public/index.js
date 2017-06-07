@@ -506,7 +506,6 @@ const makeLineChart = incomingData => {
 }
 
 const updateLineChart = (data) => {
-
   let margin = { top: 30, right: 20, bottom: 30, left: 50 }
   let width = 960 - margin.left - margin.right
   let height = 500 - margin.top - margin.bottom
