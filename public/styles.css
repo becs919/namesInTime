@@ -92,10 +92,32 @@ input[type=number]::-webkit-outer-spin-button {
 #name-data {
   display          : none;
   width            : 200px;
-  height           : 200px;
+  height           : 175px;
   margin           : 23px auto;
   color            : black;
   background-color : white;
+  flex-wrap        : nowrap;
+  flex-direction   : column;
+  border-radius    : 5px;
+}
+
+.single-name {
+  width                   : 100%;
+  padding-top             : 15px;
+  background-color        : #5a84b6;
+  color                   : white;
+  font-size               : 20px;
+  height                  : 40px;
+  text-align              : center;
+  border-top-left-radius  : 5px;
+  border-top-right-radius : 5px;
+}
+.single-year,
+.single-count,
+.second-count
+ {
+  text-align        : center;
+  padding    : 10px;
 }
 
 #chart,

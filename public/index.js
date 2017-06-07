@@ -25,7 +25,7 @@ $('#submit-button').on('click', event => {
 
 const displayNameData = (data) => {
   console.log('displayname', data)
-  $('#name-data').css('display', 'block')
+  $('#name-data').css('display', 'flex')
   $('#chart2').hide()
   $('#chart3').hide()
 
