@@ -453,7 +453,6 @@ const queryBubbleAllYears = (datapoints) => {
     .on('tick', ticked)
 }
 
-
 const makeLineChart = incomingData => {
   let data = incomingData
 
