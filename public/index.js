@@ -235,6 +235,7 @@ const bubbles = () => {
       .attr('class', 'title')
       .text('Top Names of 2016')
       .style('fill', 'white')
+      .style('font-size', '20px')
 
     let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 30])
 
@@ -256,9 +257,9 @@ const bubbles = () => {
         .each(function (d) {
           let circle = d3.select(this)
           if (d.gender === 'M') {
-            circle.attr('fill', '#91bdcf')
+            circle.attr('fill', '#d3e3ef')
           } else if (d.gender === 'F') {
-            circle.attr('fill', '#f79f9d')
+            circle.attr('fill', '#eb96c1')
           }
         })
         .on('mouseover', d => {
@@ -325,6 +326,7 @@ const queryBubble = (datapoints) => {
     .attr('class', 'title-2')
     .text(`Top Names of ${datapoints[0].year}`)
     .style('fill', 'white')
+    .style('font-size', '20px')
 
   let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
 
@@ -346,9 +348,9 @@ const queryBubble = (datapoints) => {
       .each(function (d) {
         let circle = d3.select(this)
         if (d.gender === 'M') {
-          circle.attr('fill', '#91bdcf')
+          circle.attr('fill', '#d3e3ef')
         } else if (d.gender === 'F') {
-          circle.attr('fill', '#f79f9d')
+          circle.attr('fill', '#eb96c1')
         }
       })
       .on('mouseover', d => {
@@ -401,8 +403,9 @@ const queryBubbleAllYears = (datapoints) => {
     .attr('y', margin.top)
     .attr('text-anchor', 'middle')
     .attr('class', 'title-3')
-    .text(`1880-2016 ${datapoints[0].name}, ${datapoints[0].gender}`)
+    .text(`1880-2016 ${datapoints[0].name}`)
     .style('fill', 'white')
+    .style('font-size', '20px')
 
   let radiusScale = d3.scaleSqrt().domain(countRange).range([5, 40])
 
@@ -424,9 +427,9 @@ const queryBubbleAllYears = (datapoints) => {
       .each(function (d) {
         let circle = d3.select(this)
         if (d.gender === 'M') {
-          circle.attr('fill', '#91bdcf')
+          circle.attr('fill', '#d3e3ef')
         } else if (d.gender === 'F') {
-          circle.attr('fill', '#f79f9d')
+          circle.attr('fill', '#eb96c1')
         }
       })
       .on('mouseover', d => {
