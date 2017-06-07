@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <title>Names In Time</title>
@@ -18,15 +18,15 @@
 
     <p id="error-msg"></p>
     <section id="input-section">
-      <input id="name-search" type="text" placeholder="Search Name"></input>
-      <input id="year-search" type="number" placeholder="Search 1880-2016"></input>
-      <select for="Gender" id="gender">
+      <input id="name-search" aria-label="name" type="text" placeholder="Search Name"></input>
+      <input id="year-search" aria-label="year" type="number" placeholder="Search 1880-2016"></input>
+      <select aria-label="gender" for="Gender" id="gender">
         <option value="hide">-- Gender --</option>
         <option value="All">Male &amp; Female</option>
         <option value="M">Male</option>
         <option value="F">Female</option>
       </select>
-      <button id="submit-button">Search</button>
+      <button aria-label="submit" id="submit-button">Search</button>
     </section>
 
     <div id="name-data">

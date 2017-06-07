@@ -1,4 +1,4 @@
-/* #50514F #F25F5C #FFE066 #247BA0 #70C1B3 */
+/* #50514F #eb96c1 #afccdc #5a84b6 #8c1637*/
 
 body {
   background-color : #50514F;
@@ -8,19 +8,20 @@ body {
 
 header {
   display          : flex;
-  height           : 60px;
+  height           : 70px;
   color            : white;
-  background-color : #247BA0;
+  background-color : #8c1637;
   align-items      : center;
-  font-size        : 30px;
+  font-size        : 35px;
   font-weight      : 500;
   justify-content  : center;
 }
 
 #submit-button {
   margin-left      : 10px;
+  padding          : 5px;
   color            : white;
-  background-color : #F25F5C;
+  background-color : #8c1637;
 }
 
 #input-section {
@@ -31,37 +32,42 @@ header {
 
 #gender,
 #year-search {
-  margin-left : 5px;
+  margin-left   : 5px;
+  padding       : 5px;
 }
 
 #name-search,
 #year-search {
-  padding       : 3px;
+  margin        : 10px;
+  padding       : 6px;
   border        : none;
   border-radius : 5px;
   outline       : none;
+  font-size     : 15px;
 }
 
 #gender,
 #submit-button {
-  border  : none;
-  outline : none;
+  margin        : 10px;
+  border        : none;
+  outline       : none;
+  font-size     : 15px;
 }
 
 #error-msg {
   margin-top : 10px;
-  color      : #F25F5C;
+  color      : #eb96c1;
   text-align : center;
+}
+
+#year-search {
+  width : 140px;
 }
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance : none;
   margin             : 0;
-}
-
-#year-search {
-  width : 110px;
 }
 
 .tooltip {
@@ -86,10 +92,32 @@ input[type=number]::-webkit-outer-spin-button {
 #name-data {
   display          : none;
   width            : 200px;
-  height           : 200px;
+  height           : 175px;
   margin           : 23px auto;
   color            : black;
   background-color : white;
+  flex-wrap        : nowrap;
+  flex-direction   : column;
+  border-radius    : 5px;
+}
+
+.single-name {
+  width                   : 100%;
+  padding-top             : 15px;
+  background-color        : #5a84b6;
+  color                   : white;
+  font-size               : 20px;
+  height                  : 40px;
+  text-align              : center;
+  border-top-left-radius  : 5px;
+  border-top-right-radius : 5px;
+}
+.single-year,
+.single-count,
+.second-count
+ {
+  text-align        : center;
+  padding    : 10px;
 }
 
 #chart,
@@ -134,7 +162,7 @@ input[type=number]::-webkit-outer-spin-button {
   100% {
     -webkit-transform : scaleY(0.4);
   }
-  
+
   20% {
     -webkit-transform : scaleY(1);
   }
@@ -151,5 +179,11 @@ input[type=number]::-webkit-outer-spin-button {
   20% {
     -webkit-transform : scaleY(1);
     transform         : scaleY(1);
+  }
+}
+
+@media (max-width: 700px) {
+  #input-section {
+    flex-wrap: wrap;
   }
 }
