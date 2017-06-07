@@ -57,4 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+data/json/*.json
+
 .DS_Store
