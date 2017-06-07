@@ -25,7 +25,7 @@ module.exports = {
       directory: './db/seeds/production',
     },
     useNullAsDefault: true,
-    acquireConnectionTimeout: 60000,
+    acquireConnectionTimeout: 600000,
     pool: {
       min: 0,
       max: 20,
