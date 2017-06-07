@@ -153,3 +153,16 @@ input[type=number]::-webkit-outer-spin-button {
     transform         : scaleY(1);
   }
 }
+
+.line {
+  fill: none;
+  stroke: #247BA0;
+  stroke-width: 2px;
+}
+
+.svg-chart {
+  display: block;
+  background-color: AliceBlue;
+  margin: 20px auto;
+
+}
