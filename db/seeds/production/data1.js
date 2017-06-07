@@ -13,7 +13,7 @@ exports.seed = function (knex, Promise) {
     .then(function () {
       let yearsArray = []
 
-      for (let year = 1880; year <= 2016; year++) {
+      for (let year = 1916; year <= 2016; year++) {
         yearsArray.push(year)
       }
 
