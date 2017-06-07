@@ -24,7 +24,6 @@ $('#submit-button').on('click', event => {
 })
 
 const displayNameData = (data) => {
-  console.log('displayname', data)
   $('#name-data').css('display', 'flex')
   $('#chart2').hide()
   $('#chart3').hide()
@@ -206,7 +205,6 @@ const submitData = (name, year, gender) => {
 }
 
 const bubbles = () => {
-  console.log('in bubbles')
   let width = 1024
   let height = 1024
 
@@ -377,7 +375,6 @@ const queryBubble = (datapoints) => {
     .on('tick', ticked)
 }
 const queryBubbleAllYears = (datapoints) => {
-  console.log(datapoints)
   $('#chart3').show()
   $('#chart2').hide()
   hideAnimation()
