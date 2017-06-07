@@ -27,7 +27,7 @@ for (let year = 1880; year <= 2016; year++) {
 
 let newData = {}
 
-for (let year = 1880; year <= 2016; year++) {
+for (let year = 1916; year <= 2016; year++) {
   let namesPath = `./data/json/data${year}.json`
   let json = fs.readFileSync(path.resolve(__dirname, namesPath), 'utf8')
   let names = JSON.parse(json)
