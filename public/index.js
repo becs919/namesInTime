@@ -1,5 +1,7 @@
 const $error = $('#error-msg')
 
+let chartExists = false
+
 $(document).ready(() => {
   bubbles()
 })
@@ -135,12 +137,10 @@ const fetchNameGender = (name, gender) => {
   }).then(response => {
     return response.json()
   }).then(json => {
-    // MAY WANT TO USE CHART HERE
-    // USING IT FOR ONLY NAME & ALL GENDERS
     let cleanData = json.reduce((a, b) => {
       return a.concat(b)
     }, [])
-    queryBubbleAllYears(cleanData)
+    chartExists = chartExists ? updateLineChart(cleanData) : makeLineChart(cleanData)
   }).catch(error => {
     $error.text('Error: No Matches')
     console.error(error)
@@ -451,4 +451,94 @@ const queryBubbleAllYears = (datapoints) => {
 
   simulation.nodes(datapoints)
     .on('tick', ticked)
+}
+
+
+const makeLineChart = incomingData => {
+  let data = incomingData
+
+  let margin = { top: 30, right: 20, bottom: 30, left: 50 }
+  let width = 960 - margin.left - margin.right
+  let height = 500 - margin.top - margin.bottom
+
+  let xScale = d3
+    .scaleLinear()
+    .domain(d3.extent(data, d => d.year))
+    .range([0, width])
+
+  let yScale = d3
+    .scaleLinear()
+    .domain([0, d3.max(data, d => d.count)])
+    .range([height, 0])
+
+  let line = d3.line().x(d => xScale(d.year)).y(d => yScale(d.count))
+
+  var svg = d3
+    .select('body')
+    .append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .attr('class', 'svg-chart')
+    .append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+  svg.append('path').data([data]).attr('class', 'line').attr('d', line)
+  svg.append('text')
+        .attr('x', (width / 2))
+        .attr('y', 0 - (margin.top / 2))
+        .attr('class', 'chart-title')
+        .attr('text-anchor', 'middle')
+        .style('font-size', '16px')
+        .style('text-decoration', 'underline')
+        .style('fill', 'black')
+        .text(data[0].name + ',   ' + data[0].gender)
+
+  svg
+    .append('g')
+    .attr('class', 'bottom-axis')
+    .attr('transform', 'translate(0,' + height + ')')
+    .call(d3.axisBottom(xScale).tickFormat(d3.format('d')))
+
+  svg.append('g')
+    .attr('class', 'left-axis')
+    .call(d3.axisLeft(yScale))
+
+  return true
+}
+
+const updateLineChart = (data) => {
+
+  let margin = { top: 30, right: 20, bottom: 30, left: 50 }
+  let width = 960 - margin.left - margin.right
+  let height = 500 - margin.top - margin.bottom
+
+  let xScale = d3
+    .scaleLinear()
+    .domain(d3.extent(data, d => d.year))
+    .range([0, width])
+
+  let yScale = d3
+    .scaleLinear()
+    .domain([0, d3.max(data, d => d.count)])
+    .range([height, 0])
+
+  let line = d3.line().x(d => xScale(d.year)).y(d => yScale(d.count))
+
+  const svg = d3.select('.svg-chart')
+    .transition()
+
+  svg.select('.line')
+    .duration(750)
+    .attr('d', line(data))
+  svg.select('.bottom-axis')
+    .duration(750)
+    .call(d3.axisBottom(xScale).tickFormat(d3.format('d')))
+  svg.select('.left-axis')
+    .duration(750)
+    .call(d3.axisLeft(yScale))
+  svg.select('.chart-title')
+    .duration(750)
+    .text(data[0].name + ',   ' + data[0].gender)
+
+  return true
 }
